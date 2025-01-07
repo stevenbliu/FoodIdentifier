@@ -1,0 +1,249 @@
+version: '3'
+services:
+  # static-site:
+  #   image: dockersamples/static-site
+  #   build: ./static-site
+  #   ports:
+  #     - "8000:80"
+  #   restart: always
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    command:
+      - "http"
+      # - "http://host.docker.internal:8000"  # Pointing to the backend service on port 8000
+      - "http://backend:8000" 
+      # - "--skip-browser-warning"
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    ports:
+      - "4040:4040"
+    # depends_on:
+    #   - static-site
+  # ngrok2:
+  #   image: ngrok/ngrok:latest
+  #   command:
+  #     - "http"
+  #     # - "http://host.docker.internal:8000"  # Pointing to the backend service on port 8000
+  #     - "http://frontend:3000"
+  #   environment:
+  #     NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+  #   ports:
+  #     - "4041:4040"
+  #   # depends_on:
+  #     # - static-site
+
+  backend:
+    build: ./backend
+    volumes:
+      - ./backend:/app
+      # - ./backend:/photo_handler
+
+    ports:
+      - "8000:8000"
+    depends_on:
+      # - db
+      - postgres_primary
+      # - ngrok
+    environment:
+      # - DATABASE_URL=postgres://user:password@db:5432/dbname
+      - DATABASE_URL=postgres://user:password@postgres_primary:5432/dbname
+
+      - REACT_APP_API_URL=http://backend:8000  # Use internal backend service
+      # - NGROK_API=http://ngrok:4040/api/tunnels
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    env_file:
+      - ./.env
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "yes"
+
+  frontend:
+    build: 
+      context: .  # Ensure this is the root of your project (where the docker-compose.yml is)
+      dockerfile: frontend/Dockerfile  # Sp
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+      # - ngrok
+    environment:
+      - REACT_APP_API_URL=http://backend:8000  # Use internal backend service
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+      - FAST_REFRESH=false
+      - WDS_SOCKET_PORT=3000
+    volumes:
+      # - ./frontend:/src
+      - ./frontend/src:/app/src
+      - /app/node_modules  # Optional: This ensures node_modules are not overridden by your local system
+    env_file:
+      - ./.env
+
+    # working_dir: /frontend
+
+  # db:
+  #   image: postgres:13
+  #   environment:
+  #     POSTGRES_USER: user
+  #     POSTGRES_PASSWORD: password
+  #     POSTGRES_DB: dbname
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+
+  postgres_primary:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres 
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: dbname
+      # PGDATA: /var/lib/postgresql/data  # New directory to store data
+
+      # POSTGRES_INITDB_WALDIR: /var/lib/postgresql/data/pg_wal
+    volumes:
+      - postgres_data_primary:/var/lib/postgresql/data
+      # - ./postgres/init_pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
+      # - ./postgres/init_user.sql:/docker-entrypoint-initdb.d/init_user.sql
+      - ./postgres/init_pg_hba.sh:/docker-entrypoint-initdb.d/init_pg_hba.sh
+
+  #     # # - pgdata:/var/lib/postgresql/data
+
+      - ./postgres/init_primary.sql:/docker-entrypoint-initdb.d/init_primary.sql
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"  # Exposed for replication
+    # user: postgres
+    # command: ["bash", "-c", "rm -rf /var/lib/postgresql/data/* && initdb -D /var/lib/postgresql/data && postgres"]
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user", "-d", "dbname"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+    mem_limit: 4g
+    cpu_quota: 100000
+    cpu_period: 100000
+
+  postgres_replica:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: replicadb
+      POSTGRES_PRIMARY_HOST: postgres_primary
+      POSTGRES_PRIMARY_PORT: 5432
+      POSTGRES_REPLICATION_USER: replication_user
+      POSTGRES_REPLICATION_PASSWORD: replication_password
+      POSTGRES_HOST_AUTH_METHOD: md5
+    depends_on:
+        postgres_primary:
+          condition: service_healthy  # Waits for the primary to be healthy before starting
+    volumes:
+      - postgres_data_replica:/var/lib/postgresql/data
+      - ./postgres/init_replica.sh:/docker-entrypoint-initdb.d/init_replica.sh
+    ports:
+      - "5433:5432"  # Expose different port for replica
+    mem_limit: 4g
+    cpu_quota: 100000
+    cpu_period: 100000
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      # - db
+      - postgres_primary
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+  # elasticsearch:
+  #   image: elastic/elasticsearch:8.16.2
+  #   environment:
+  #     - discovery.type=single-node
+  #     - ELASTIC_PASSWORD=yourpassword
+  #     - xpack.security.enabled=true
+  #     - ELASTICSEARCH_USERNAME=user           # Elasticsearch username
+  #     - ELASTICSEARCH_PASSWORD=pass123           # Elasticsearch password
+  #     - ELASTICSEARCH_SSL_ENABLED=true
+  #     - ELASTICSEARCH_SSL_CERTIFICATE=/usr/share/elasticsearch/config/certs/elasticsearch.crt
+  #     - ELASTICSEARCH_SSL_KEY=/usr/share/elasticsearch/config/certs/elasticsearch.key
+  #     - ELASTICSEARCH_SSL_CA_CERTIFICATE=/usr/share/elasticsearch/config/certs/ca.crt
+  #   volumes:
+  #     - ./certs:/usr/share/elasticsearch/config/certs  # Mount the certs directory into the container
+  #     - esdata:/usr/share/elasticsearch/data  # Use a named volume for Elasticsearch data
+  #   ports:
+  #     - "9200:9200"  # Elasticsearch default port
+
+  # kibana:
+  #   image: kibana:8.16.0
+  #   environment:
+  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  #     - ELASTICSEARCH_USERNAME=user           # Replace with your actual username
+  #     - ELASTICSEARCH_PASSWORD=pass123           # Replace with your actual password
+  #     - SERVER_NAME=kibana
+  #     - SERVER_HOST=0.0.0.0
+  #     - ELASTICSEARCH_SSL_ENABLED=true
+  #     - ELASTICSEARCH_SSL_CERTIFICATE_AUTHORITIES=/usr/share/kibana/config/certs/ca.crt
+  #     # - xpack.encryptedSavedObjects.encryptionKey=your-encryption-key-here
+  #   volumes:
+  #     - ./certs:/usr/share/kibana/config/certs  # Mount the
+  #     - esdata:/usr/share/elasticsearch/data  # Use a named volume for Elasticsearch data
+  #   ports:
+  #     - "5601:5601"  # Kibana default port
+  #   depends_on:
+  #     - elasticsearch
+
+
+  # prometheus:
+  #   image: prom/prometheus:v2.43.0
+  #   container_name: prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  # grafana:
+  #   image: grafana/grafana:8.4.0
+  #   container_name: grafana
+  #   ports:
+  #     - "3001:3000"
+  #   environment:
+  #     - GF_SECURITY_ADMIN_PASSWORD=admin
+
+
+  # postgres_exporter:
+  #   image: wrouesnel/postgres_exporter:latest
+    # container_name: postgres_exporter
+  #   environment:
+  #     - DATA_SOURCE_NAME=postgresql://postgres:password@postgres:5432/dbname?sslmode=disable
+  #   ports:
+  #     - "9187:9187"
+
+  locust:
+    image: locustio/locust
+    container_name: locust
+    ports:
+      - "8089:8089"  # Expose Locust Web UI on port 8089
+    volumes:
+      - ./locust/locustfile.py:/locustfile.py  # Mount your Locust file with test scenarios
+    depends_on:
+      - backend  # Ensure backend is up before running Locust
+
+
+
+volumes:
+  pgdata:
+  pgadmin_data:
+  esdata:
+  postgres_data_primary:
+  postgres_data_replica:

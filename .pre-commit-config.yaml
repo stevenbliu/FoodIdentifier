@@ -1,0 +1,16 @@
+---
+repos:
+  - repo: https://github.com/GitGuardian/ggshield
+    rev: main
+    hooks:
+      - id: ggshield
+        name: ggshield
+        # args: ['--all-files']
+
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.0.3
+    hooks:
+      - id: detect-secrets
+        name: detect-secrets
+        files: ^(?!.*\.env$).*  # Exclude .env file
+

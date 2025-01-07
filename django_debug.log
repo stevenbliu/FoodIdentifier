@@ -1,0 +1,740 @@
+CREATE TABLE "django_migrations" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "app" varchar(255) NOT NULL, "name" varchar(255) NOT NULL, "applied" datetime NOT NULL); (params None)
+CREATE TABLE "django_content_type" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(100) NOT NULL, "app_label" varchar(100) NOT NULL, "model" varchar(100) NOT NULL); (params None)
+CREATE UNIQUE INDEX "django_content_type_app_label_model_76bd3d3b_uniq" ON "django_content_type" ("app_label", "model"); (params ())
+CREATE TABLE "auth_permission" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(50) NOT NULL, "content_type_id" integer NOT NULL REFERENCES "django_content_type" ("id") DEFERRABLE INITIALLY DEFERRED, "codename" varchar(100) NOT NULL); (params None)
+CREATE TABLE "auth_group" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(80) NOT NULL UNIQUE); (params None)
+CREATE TABLE "auth_group_permissions" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "group_id" integer NOT NULL REFERENCES "auth_group" ("id") DEFERRABLE INITIALLY DEFERRED, "permission_id" integer NOT NULL REFERENCES "auth_permission" ("id") DEFERRABLE INITIALLY DEFERRED); (params None)
+CREATE TABLE "auth_user" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "password" varchar(128) NOT NULL, "last_login" datetime NOT NULL, "is_superuser" bool NOT NULL, "username" varchar(30) NOT NULL UNIQUE, "first_name" varchar(30) NOT NULL, "last_name" varchar(30) NOT NULL, "email" varchar(75) NOT NULL, "is_staff" bool NOT NULL, "is_active" bool NOT NULL, "date_joined" datetime NOT NULL); (params None)
+CREATE TABLE "auth_user_groups" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "user_id" integer NOT NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED, "group_id" integer NOT NULL REFERENCES "auth_group" ("id") DEFERRABLE INITIALLY DEFERRED); (params None)
+CREATE TABLE "auth_user_user_permissions" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "user_id" integer NOT NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED, "permission_id" integer NOT NULL REFERENCES "auth_permission" ("id") DEFERRABLE INITIALLY DEFERRED); (params None)
+CREATE UNIQUE INDEX "auth_permission_content_type_id_codename_01ab375a_uniq" ON "auth_permission" ("content_type_id", "codename"); (params None)
+CREATE INDEX "auth_permission_content_type_id_2f476e4b" ON "auth_permission" ("content_type_id"); (params None)
+CREATE UNIQUE INDEX "auth_group_permissions_group_id_permission_id_0cd325b0_uniq" ON "auth_group_permissions" ("group_id", "permission_id"); (params None)
+CREATE INDEX "auth_group_permissions_group_id_b120cbf9" ON "auth_group_permissions" ("group_id"); (params None)
+CREATE INDEX "auth_group_permissions_permission_id_84c5c92e" ON "auth_group_permissions" ("permission_id"); (params None)
+CREATE UNIQUE INDEX "auth_user_groups_user_id_group_id_94350c0c_uniq" ON "auth_user_groups" ("user_id", "group_id"); (params None)
+CREATE INDEX "auth_user_groups_user_id_6a12ed8b" ON "auth_user_groups" ("user_id"); (params None)
+CREATE INDEX "auth_user_groups_group_id_97559544" ON "auth_user_groups" ("group_id"); (params None)
+CREATE UNIQUE INDEX "auth_user_user_permissions_user_id_permission_id_14a6b632_uniq" ON "auth_user_user_permissions" ("user_id", "permission_id"); (params None)
+CREATE INDEX "auth_user_user_permissions_user_id_a95ead1b" ON "auth_user_user_permissions" ("user_id"); (params None)
+CREATE INDEX "auth_user_user_permissions_permission_id_1fbb5f2c" ON "auth_user_user_permissions" ("permission_id"); (params None)
+CREATE TABLE "django_admin_log" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "action_time" datetime NOT NULL, "object_id" text NULL, "object_repr" varchar(200) NOT NULL, "action_flag" smallint unsigned NOT NULL CHECK ("action_flag" >= 0), "change_message" text NOT NULL, "content_type_id" integer NULL REFERENCES "django_content_type" ("id") DEFERRABLE INITIALLY DEFERRED, "user_id" integer NOT NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED); (params None)
+CREATE INDEX "django_admin_log_content_type_id_c4bce8eb" ON "django_admin_log" ("content_type_id"); (params None)
+CREATE INDEX "django_admin_log_user_id_c564eba6" ON "django_admin_log" ("user_id"); (params None)
+CREATE TABLE "new__django_admin_log" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "object_id" text NULL, "object_repr" varchar(200) NOT NULL, "action_flag" smallint unsigned NOT NULL CHECK ("action_flag" >= 0), "change_message" text NOT NULL, "content_type_id" integer NULL REFERENCES "django_content_type" ("id") DEFERRABLE INITIALLY DEFERRED, "user_id" integer NOT NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED, "action_time" datetime NOT NULL); (params None)
+INSERT INTO "new__django_admin_log" ("id", "object_id", "object_repr", "action_flag", "change_message", "content_type_id", "user_id", "action_time") SELECT "id", "object_id", "object_repr", "action_flag", "change_message", "content_type_id", "user_id", "action_time" FROM "django_admin_log"; (params ())
+DROP TABLE "django_admin_log"; (params ())
+ALTER TABLE "new__django_admin_log" RENAME TO "django_admin_log"; (params ())
+CREATE INDEX "django_admin_log_content_type_id_c4bce8eb" ON "django_admin_log" ("content_type_id"); (params ())
+CREATE INDEX "django_admin_log_user_id_c564eba6" ON "django_admin_log" ("user_id"); (params ())
+CREATE TABLE "new__django_content_type" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "app_label" varchar(100) NOT NULL, "model" varchar(100) NOT NULL, "name" varchar(100) NULL); (params None)
+INSERT INTO "new__django_content_type" ("id", "app_label", "model", "name") SELECT "id", "app_label", "model", "name" FROM "django_content_type"; (params ())
+DROP TABLE "django_content_type"; (params ())
+ALTER TABLE "new__django_content_type" RENAME TO "django_content_type"; (params ())
+CREATE UNIQUE INDEX "django_content_type_app_label_model_76bd3d3b_uniq" ON "django_content_type" ("app_label", "model"); (params ())
+ALTER TABLE "django_content_type" DROP COLUMN "name"; (params ())
+CREATE TABLE "new__auth_permission" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "content_type_id" integer NOT NULL REFERENCES "django_content_type" ("id") DEFERRABLE INITIALLY DEFERRED, "codename" varchar(100) NOT NULL, "name" varchar(255) NOT NULL); (params None)
+INSERT INTO "new__auth_permission" ("id", "content_type_id", "codename", "name") SELECT "id", "content_type_id", "codename", "name" FROM "auth_permission"; (params ())
+DROP TABLE "auth_permission"; (params ())
+ALTER TABLE "new__auth_permission" RENAME TO "auth_permission"; (params ())
+CREATE UNIQUE INDEX "auth_permission_content_type_id_codename_01ab375a_uniq" ON "auth_permission" ("content_type_id", "codename"); (params ())
+CREATE INDEX "auth_permission_content_type_id_2f476e4b" ON "auth_permission" ("content_type_id"); (params ())
+CREATE TABLE "new__auth_user" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "password" varchar(128) NOT NULL, "last_login" datetime NOT NULL, "is_superuser" bool NOT NULL, "username" varchar(30) NOT NULL UNIQUE, "first_name" varchar(30) NOT NULL, "last_name" varchar(30) NOT NULL, "is_staff" bool NOT NULL, "is_active" bool NOT NULL, "date_joined" datetime NOT NULL, "email" varchar(254) NOT NULL); (params None)
+INSERT INTO "new__auth_user" ("id", "password", "last_login", "is_superuser", "username", "first_name", "last_name", "is_staff", "is_active", "date_joined", "email") SELECT "id", "password", "last_login", "is_superuser", "username", "first_name", "last_name", "is_staff", "is_active", "date_joined", "email" FROM "auth_user"; (params ())
+DROP TABLE "auth_user"; (params ())
+ALTER TABLE "new__auth_user" RENAME TO "auth_user"; (params ())
+CREATE TABLE "new__auth_user" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "password" varchar(128) NOT NULL, "is_superuser" bool NOT NULL, "username" varchar(30) NOT NULL UNIQUE, "first_name" varchar(30) NOT NULL, "last_name" varchar(30) NOT NULL, "email" varchar(254) NOT NULL, "is_staff" bool NOT NULL, "is_active" bool NOT NULL, "date_joined" datetime NOT NULL, "last_login" datetime NULL); (params None)
+INSERT INTO "new__auth_user" ("id", "password", "is_superuser", "username", "first_name", "last_name", "email", "is_staff", "is_active", "date_joined", "last_login") SELECT "id", "password", "is_superuser", "username", "first_name", "last_name", "email", "is_staff", "is_active", "date_joined", "last_login" FROM "auth_user"; (params ())
+DROP TABLE "auth_user"; (params ())
+ALTER TABLE "new__auth_user" RENAME TO "auth_user"; (params ())
+CREATE TABLE "new__auth_user" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "password" varchar(128) NOT NULL, "last_login" datetime NULL, "is_superuser" bool NOT NULL, "first_name" varchar(30) NOT NULL, "last_name" varchar(30) NOT NULL, "email" varchar(254) NOT NULL, "is_staff" bool NOT NULL, "is_active" bool NOT NULL, "date_joined" datetime NOT NULL, "username" varchar(150) NOT NULL UNIQUE); (params None)
+INSERT INTO "new__auth_user" ("id", "password", "last_login", "is_superuser", "first_name", "last_name", "email", "is_staff", "is_active", "date_joined", "username") SELECT "id", "password", "last_login", "is_superuser", "first_name", "last_name", "email", "is_staff", "is_active", "date_joined", "username" FROM "auth_user"; (params ())
+DROP TABLE "auth_user"; (params ())
+ALTER TABLE "new__auth_user" RENAME TO "auth_user"; (params ())
+CREATE TABLE "new__auth_user" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "password" varchar(128) NOT NULL, "last_login" datetime NULL, "is_superuser" bool NOT NULL, "username" varchar(150) NOT NULL UNIQUE, "first_name" varchar(30) NOT NULL, "email" varchar(254) NOT NULL, "is_staff" bool NOT NULL, "is_active" bool NOT NULL, "date_joined" datetime NOT NULL, "last_name" varchar(150) NOT NULL); (params None)
+INSERT INTO "new__auth_user" ("id", "password", "last_login", "is_superuser", "username", "first_name", "email", "is_staff", "is_active", "date_joined", "last_name") SELECT "id", "password", "last_login", "is_superuser", "username", "first_name", "email", "is_staff", "is_active", "date_joined", "last_name" FROM "auth_user"; (params ())
+DROP TABLE "auth_user"; (params ())
+ALTER TABLE "new__auth_user" RENAME TO "auth_user"; (params ())
+CREATE TABLE "new__auth_group" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(150) NOT NULL UNIQUE); (params None)
+INSERT INTO "new__auth_group" ("id", "name") SELECT "id", "name" FROM "auth_group"; (params ())
+DROP TABLE "auth_group"; (params ())
+ALTER TABLE "new__auth_group" RENAME TO "auth_group"; (params ())
+CREATE TABLE "new__auth_user" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "password" varchar(128) NOT NULL, "last_login" datetime NULL, "is_superuser" bool NOT NULL, "username" varchar(150) NOT NULL UNIQUE, "last_name" varchar(150) NOT NULL, "email" varchar(254) NOT NULL, "is_staff" bool NOT NULL, "is_active" bool NOT NULL, "date_joined" datetime NOT NULL, "first_name" varchar(150) NOT NULL); (params None)
+INSERT INTO "new__auth_user" ("id", "password", "last_login", "is_superuser", "username", "last_name", "email", "is_staff", "is_active", "date_joined", "first_name") SELECT "id", "password", "last_login", "is_superuser", "username", "last_name", "email", "is_staff", "is_active", "date_joined", "first_name" FROM "auth_user"; (params ())
+DROP TABLE "auth_user"; (params ())
+ALTER TABLE "new__auth_user" RENAME TO "auth_user"; (params ())
+CREATE TABLE "django_session" ("session_key" varchar(40) NOT NULL PRIMARY KEY, "session_data" text NOT NULL, "expire_date" datetime NOT NULL); (params None)
+CREATE INDEX "django_session_expire_date_a5c62663" ON "django_session" ("expire_date"); (params None)
+Calculation result: https://foodphotobucket.s3.amazonaws.com/test_image.jpg?AWSAccessKeyId=AKIAXNGUVOKN5L35IJ3D&Signature=yy8Jzc60KpfWK%2FD1o1xwQ6K2PYI%3D&content-type=image%2Fjpeg&Expires=1734392141
+Calculation result: https://foodphotobucket.s3.amazonaws.com/test_image.jpg?AWSAccessKeyId=AKIAXNGUVOKN5L35IJ3D&Signature=EztVXLVbxI0KWiGWE58zDIxoGgM%3D&content-type=image%2Fjpeg&Expires=1734392158
+Calculation result: https://foodphotobucket.s3.amazonaws.com/test_image.jpg?AWSAccessKeyId=AKIAXNGUVOKN5L35IJ3D&Signature=Z9w0E0Lz397hlOQJOybzMFT4d94%3D&content-type=image%2Fjpeg&Expires=1734392595
+Calculation result: https://foodphotobucket.s3.amazonaws.com/test_image.jpg?AWSAccessKeyId=AKIAXNGUVOKN5L35IJ3D&Signature=1iBtdHwYiYaYH4ZCrevw9KlyRys%3D&content-type=image%2Fjpeg&Expires=1734392618
+Calculation result: https://foodphotobucket.s3.amazonaws.com/test_image.jpg?AWSAccessKeyId=AKIAXNGUVOKN5L35IJ3D&Signature=1iBtdHwYiYaYH4ZCrevw9KlyRys%3D&content-type=image%2Fjpeg&Expires=1734392618
+Calculation result: https://foodphotobucket.s3.amazonaws.com/test_image.jpg?AWSAccessKeyId=AKIAXNGUVOKN5L35IJ3D&Signature=0J9EzDGwZhi%2BYTuWfj3tDT%2FBZ0k%3D&content-type=image%2Fjpeg&Expires=1734392698
+Calculation result: <MagicMock name='client().generate_presigned_url()' id='1307611621776'>
+Internal Server Error: /photo-handler/generate-presigned-url/test_image.jpg/1024/
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\GitHub\Food_Identifier\photo_handler\views.py", line 23, in generate_presigned_url
+    return JsonResponse({'url': response})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\response.py", line 733, in __init__
+    data = json.dumps(data, cls=encoder, **json_dumps_params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\json\encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\json\encoder.py", line 258, in iterencode
+    return _iterencode(o, 0)
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\serializers\json.py", line 106, in default
+    return super().default(o)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type MagicMock is not JSON serializable
+Internal Server Error: /photo-handler/generate-presigned-url/test_image.jpg/1024/
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\GitHub\Food_Identifier\photo_handler\views.py", line 23, in generate_presigned_url
+    return JsonResponse({'url': response})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\response.py", line 733, in __init__
+    data = json.dumps(data, cls=encoder, **json_dumps_params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\json\encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\json\encoder.py", line 258, in iterencode
+    return _iterencode(o, 0)
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\serializers\json.py", line 106, in default
+    return super().default(o)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type MagicMock is not JSON serializable
+'12321:', <JsonResponse status_code=200, "application/json">
+'12321:', /photo-handler/generate-presigned-url/test_image.jpg/1024/
+Internal Server Error: /photo-handler/get-presigned-url/
+"POST /photo-handler/get-presigned-url/ HTTP/1.1" 500 719
+Internal Server Error: /photo-handler/get-presigned-url/
+"POST /photo-handler/get-presigned-url/ HTTP/1.1" 500 719
+Internal Server Error: /photo-handler/get-presigned-url/
+"POST /photo-handler/get-presigned-url/ HTTP/1.1" 500 719
+Internal Server Error: /photo-handler/get-presigned-url/
+"POST /photo-handler/get-presigned-url/ HTTP/1.1" 500 719
+Internal Server Error: /photo-handler/get-presigned-url/
+"POST /photo-handler/get-presigned-url/ HTTP/1.1" 500 719
+Internal Server Error: /photo-handler/get-presigned-url/
+"POST /photo-handler/get-presigned-url/ HTTP/1.1" 500 719
+Internal Server Error: /photo-handler/get-presigned-url/
+"POST /photo-handler/get-presigned-url/ HTTP/1.1" 500 719
+Internal Server Error: /photo-handler/get-presigned-url/
+"POST /photo-handler/get-presigned-url/ HTTP/1.1" 500 49
+Internal Server Error: /photo-handler/get-presigned-url/
+"POST /photo-handler/get-presigned-url/ HTTP/1.1" 500 90
+Internal Server Error: /photo-handler/get-presigned-url/
+"POST /photo-handler/get-presigned-url/ HTTP/1.1" 500 49
+'12321:', /photo-handler/get-presigned-url/
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 203
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 255
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 255
+Internal Server Error: /photo-handler/get-presigned-url/
+"POST /photo-handler/get-presigned-url/ HTTP/1.1" 500 66
+Internal Server Error: /photo-handler/get-presigned-url/
+"POST /photo-handler/get-presigned-url/ HTTP/1.1" 500 66
+Invalid HTTP_HOST header: 'db49-76-126-145-131.ngrok-free.app'. You may need to add 'db49-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'db49-76-126-145-131.ngrok-free.app'. You may need to add 'db49-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: 'db49-76-126-145-131.ngrok-free.app'. You may need to add 'db49-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'db49-76-126-145-131.ngrok-free.app'. You may need to add 'db49-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: 'db49-76-126-145-131.ngrok-free.app'. You may need to add 'db49-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'db49-76-126-145-131.ngrok-free.app'. You may need to add 'db49-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: 'db49-76-126-145-131.ngrok-free.app'. You may need to add 'db49-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'db49-76-126-145-131.ngrok-free.app'. You may need to add 'db49-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 134
+Invalid HTTP_HOST header: 'db49-76-126-145-131.ngrok-free.app'. You may need to add 'db49-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'db49-76-126-145-131.ngrok-free.app'. You may need to add 'db49-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: 'db49-76-126-145-131.ngrok-free.app'. You may need to add 'db49-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'db49-76-126-145-131.ngrok-free.app'. You may need to add 'db49-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 134
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 134
+Internal Server Error: /photo-handler/sns_endpoint
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 131, in __call__
+    response = self.process_response(request, response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 108, in process_response
+    return self.response_redirect_class(self.get_full_path_with_slash(request))
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 87, in get_full_path_with_slash
+    raise RuntimeError(
+RuntimeError: You called this URL via POST, but the URL doesn't end in a slash and you have APPEND_SLASH set. Django can't redirect to the slash URL while maintaining POST data. Change your form to point to db49-76-126-145-131.ngrok-free.app/photo-handler/sns_endpoint/ (note the trailing slash), or set APPEND_SLASH=False in your Django settings.
+"POST /photo-handler/sns_endpoint HTTP/1.1" 500 75025
+Internal Server Error: /photo-handler/sns_endpoint
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 131, in __call__
+    response = self.process_response(request, response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 108, in process_response
+    return self.response_redirect_class(self.get_full_path_with_slash(request))
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 87, in get_full_path_with_slash
+    raise RuntimeError(
+RuntimeError: You called this URL via POST, but the URL doesn't end in a slash and you have APPEND_SLASH set. Django can't redirect to the slash URL while maintaining POST data. Change your form to point to db49-76-126-145-131.ngrok-free.app/photo-handler/sns_endpoint/ (note the trailing slash), or set APPEND_SLASH=False in your Django settings.
+"POST /photo-handler/sns_endpoint HTTP/1.1" 500 75025
+Internal Server Error: /photo-handler/sns_endpoint
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 131, in __call__
+    response = self.process_response(request, response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 108, in process_response
+    return self.response_redirect_class(self.get_full_path_with_slash(request))
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 87, in get_full_path_with_slash
+    raise RuntimeError(
+RuntimeError: You called this URL via POST, but the URL doesn't end in a slash and you have APPEND_SLASH set. Django can't redirect to the slash URL while maintaining POST data. Change your form to point to db49-76-126-145-131.ngrok-free.app/photo-handler/sns_endpoint/ (note the trailing slash), or set APPEND_SLASH=False in your Django settings.
+"POST /photo-handler/sns_endpoint HTTP/1.1" 500 75025
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 134
+Internal Server Error: /photo-handler/sns_endpoint
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 131, in __call__
+    response = self.process_response(request, response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 108, in process_response
+    return self.response_redirect_class(self.get_full_path_with_slash(request))
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 87, in get_full_path_with_slash
+    raise RuntimeError(
+RuntimeError: You called this URL via POST, but the URL doesn't end in a slash and you have APPEND_SLASH set. Django can't redirect to the slash URL while maintaining POST data. Change your form to point to db49-76-126-145-131.ngrok-free.app/photo-handler/sns_endpoint/ (note the trailing slash), or set APPEND_SLASH=False in your Django settings.
+"POST /photo-handler/sns_endpoint HTTP/1.1" 500 75025
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 134
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 134
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 134
+Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '055f-76-126-145-131.ngrok-free.app'. You may need to add '055f-76-126-145-131.ngrok-free.app' to ALLOWED_HOSTS.
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 93
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 93
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 93
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 93
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 93
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 93
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 93
+Internal Server Error: /photo-handler/sns_endpoint/
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\GitHub\Food_Identifier\photo_handler\views.py", line 129, in sns_endpoint
+    response = requests.get(subscribe_url)
+               ^^^^^^^^
+NameError: name 'requests' is not defined. Did you mean: 'request'?
+"POST /photo-handler/sns_endpoint/ HTTP/1.1" 500 81381
+Internal Server Error: /photo-handler/sns_endpoint/
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\GitHub\Food_Identifier\photo_handler\views.py", line 129, in sns_endpoint
+    response = request.get(subscribe_url)
+               ^^^^^^^^^^^
+AttributeError: 'WSGIRequest' object has no attribute 'get'
+"POST /photo-handler/sns_endpoint/ HTTP/1.1" 500 81506
+Internal Server Error: /photo-handler/sns_endpoint/
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\GitHub\Food_Identifier\photo_handler\views.py", line 129, in sns_endpoint
+    response = request.get(subscribe_url)
+               ^^^^^^^^^^^
+AttributeError: 'WSGIRequest' object has no attribute 'get'
+"POST /photo-handler/sns_endpoint/ HTTP/1.1" 500 81506
+Internal Server Error: /photo-handler/sns_endpoint/
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\GitHub\Food_Identifier\photo_handler\views.py", line 129, in sns_endpoint
+    response = request.get(subscribe_url)
+               ^^^^^^^^^^^
+AttributeError: 'WSGIRequest' object has no attribute 'get'
+"POST /photo-handler/sns_endpoint/ HTTP/1.1" 500 81505
+Internal Server Error: /photo-handler/sns_endpoint/
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\GitHub\Food_Identifier\photo_handler\views.py", line 129, in sns_endpoint
+    response = request.get(subscribe_url)
+               ^^^^^^^^^^^
+AttributeError: 'WSGIRequest' object has no attribute 'get'
+"POST /photo-handler/sns_endpoint/ HTTP/1.1" 500 81506
+Internal Server Error: /photo-handler/sns_endpoint/
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\GitHub\Food_Identifier\photo_handler\views.py", line 129, in sns_endpoint
+    response = request.get(subscribe_url)
+               ^^^^^^^^^^^
+AttributeError: 'WSGIRequest' object has no attribute 'get'
+"POST /photo-handler/sns_endpoint/ HTTP/1.1" 500 81507
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 93
+Internal Server Error: /photo-handler/upload-notification/
+"GET /photo-handler/upload-notification/ HTTP/1.1" 500 93
+Internal Server Error: /photo-handler/sns_endpoint/
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\GitHub\Food_Identifier\photo_handler\views.py", line 148, in sns_endpoint
+    parse_s3_notification(message)
+  File "C:\Users\Steven\GitHub\Food_Identifier\photo_handler\sns_service.py", line 43, in parse_s3_notification
+    data = json.loads(notification)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\json\decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\json\decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+"POST /photo-handler/sns_endpoint/ HTTP/1.1" 500 96433
+Internal Server Error: /photo-handler/sns_endpoint/
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\GitHub\Food_Identifier\photo_handler\views.py", line 146, in sns_endpoint
+    print("Notification received:", parse_s3_notification(message))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\GitHub\Food_Identifier\photo_handler\sns_service.py", line 43, in parse_s3_notification
+    data = json.loads(notification)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\json\decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\json\decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+"POST /photo-handler/sns_endpoint/ HTTP/1.1" 500 96946
+Internal Server Error: /photo-handler/sns_endpoint/
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\GitHub\Food_Identifier\photo_handler\views.py", line 152, in sns_endpoint
+    filename = message['object_key'],  # Filename as saved in S3
+               ~~~~~~~^^^^^^^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+"POST /photo-handler/sns_endpoint/ HTTP/1.1" 500 82951
+Internal Server Error: /photo-handler/sns_endpoint/
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\GitHub\Food_Identifier\photo_handler\views.py", line 152, in sns_endpoint
+    filename = message['object_key'],  # Filename as saved in S3
+               ~~~~~~~^^^^^^^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+"POST /photo-handler/sns_endpoint/ HTTP/1.1" 500 82952
+Internal Server Error: /photo-handler/sns_endpoint/
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\GitHub\Food_Identifier\photo_handler\views.py", line 153, in sns_endpoint
+    filename = parsed_message['object_key'],  # Filename as saved in S3
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+"POST /photo-handler/sns_endpoint/ HTTP/1.1" 500 80911
+Internal Server Error: /photo-handler/sns_endpoint/
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\GitHub\Food_Identifier\photo_handler\views.py", line 153, in sns_endpoint
+    filename = parsed_message['object_key'],  # Filename as saved in S3
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+"POST /photo-handler/sns_endpoint/ HTTP/1.1" 500 80911
+Internal Server Error: /photo-handler/sns_endpoint/
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\GitHub\Food_Identifier\photo_handler\views.py", line 153, in sns_endpoint
+    filename = parsed_message['object_key'],  # Filename as saved in S3
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+"POST /photo-handler/sns_endpoint/ HTTP/1.1" 500 80910
+Internal Server Error: /photo-handler/sns_endpoint/
+Traceback (most recent call last):
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\anaconda3\envs\food_identifier\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Steven\GitHub\Food_Identifier\photo_handler\views.py", line 153, in sns_endpoint
+    filename = parsed_message['object_key'],  # Filename as saved in S3
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+"POST /photo-handler/sns_endpoint/ HTTP/1.1" 500 80910
