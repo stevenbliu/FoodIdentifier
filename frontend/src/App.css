@@ -1,0 +1,155 @@
+/* App.css */
+
+/* General styling */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f9;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Header styling */
+.App-header {
+  text-align: center;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-width: 400px;
+  width: 100%;
+  margin: 20px;
+}
+
+/* Main title styling */
+h1 {
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+/* Button container styling */
+.button-container {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Input styling */
+input[type="file"] {
+  margin-bottom: 10px;
+}
+
+input[type="text"], input[type="file"] {
+  padding: 10px;
+  font-size: 16px;
+  width: 80%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus, input[type="file"]:focus {
+  border-color: #007BFF;
+  outline: none;
+}
+
+/* Button styling */
+button {
+  padding: 12px 20px;
+  background-color: #007BFF;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 80%;
+  transition: background-color 0.3s ease;
+  margin: 5px 0;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Image styling */
+.uploaded-image {
+  margin-top: 20px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Food info section styling */
+.food-info {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.food-info h2 {
+  font-size: 20px;
+  color: #333;
+}
+
+.food-info p {
+  color: #555;
+  font-size: 16px;
+}
+
+
+/* App.css */
+
+/* Form styling */
+.login-form, .register-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+input[type="email"], input[type="password"] {
+  padding: 10px;
+  margin: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+button {
+  padding: 10px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+p {
+  color: red;
+}

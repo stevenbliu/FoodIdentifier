@@ -1,14 +1,16 @@
----
+# pre-commit hooks to run on every commit. Checks for secrets in the codebase.
+# https://pre-commit.com/ for more information
+--- 
 repos:
   - repo: https://github.com/GitGuardian/ggshield
-    rev: main
+    rev: v1.34.0
     hooks:
       - id: ggshield
         name: ggshield
         # args: ['--all-files']
 
   - repo: https://github.com/Yelp/detect-secrets
-    rev: v1.0.3
+    rev: v1.5.0
     hooks:
       - id: detect-secrets
         name: detect-secrets

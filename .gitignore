@@ -1,2 +1,45 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environment configuration files (e.g. environment variables)
 .env
-/replace.txt
+
+# Django specific files
+*.log
+django_debug.log
+*.sqlite3
+db.sqlite3
+
+# User-specific files (e.g. IDE settings, editor backups)
+.idea/
+.vscode/
+*.swp
+
+# Virtual environment directories
+venv/
+env/
+.venv/
+ENV/
+
+# Operating system files
+.DS_Store    # macOS
+Thumbs.db    # Windows
+
+# Test and coverage files
+*.coverage
+*.coveragerc
+nosetests.xml
+coverage.xml
+*.hypothesis/
+
+# Pytest cache
+.cache/
+
+# Pre-commit hook files
+.pre-commit-config.yml
+
+
+# Other
+.cache_ggshield

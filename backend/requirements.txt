@@ -1,0 +1,62 @@
+# Django and Related Dependencies
+django>=4.2
+django-redis
+django-cors-headers
+
+# Database and ORM Dependencies
+psycopg2
+
+# Caching Dependencies
+redis
+
+# AWS SDK and Utilities
+boto3>=1.35.82
+botocore==1.35.82
+s3transfer==0.10.4
+
+# Utilities and Helpers
+python-dotenv==1.0.1
+certifi==2024.12.14
+charset-normalizer==3.4.0
+colorama==0.4.6
+psutil==6.1.0
+requests==2.32.3
+six==1.16.0
+urllib3>=1.25.4,<1.27
+wcwidth==0.2.13
+
+# Parsing and Data Processing Libraries
+asttokens==2.4.1
+executing==2.1.0
+idna==3.10
+jedi==0.19.1
+jmespath==1.0.1
+packaging==24.1
+parso==0.8.4
+stack-data==0.6.3
+
+# Image Handling
+pillow==11.0.0
+
+# Packaging and Installation
+setuptools==75.1.0
+wheel==0.44.0
+
+# Optional Dependencies (Uncomment if required)
+# pytest==7.3.1
+# pytest-django==4.5.2
+
+# Additional Dependencies
+asgiref==3.8.1
+djangorestframework==3.15.2
+djangorestframework-simplejwt
+
+debugpy==1.8.7
+decorator==5.1.1
+Pygments==2.18.0
+psycopg2==2.9.10
+pyzmq==26.2.0
+# pywin32==308
+tornado==6.4.1
+traitlets==5.14.3
+tzdata==2024.2
