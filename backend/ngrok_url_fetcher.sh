@@ -25,7 +25,7 @@ done
 
 # Overwrite the .env file with the new public URL
 echo "Updating .env file with ngrok public URL..."
-echo "REACT_APP_NGROK_PUBLIC_URL=$NGROK_PUBLIC_URL" >> .env
+echo "REACT_APP_NGROK_PUBLIC_URL=$NGROK_PUBLIC_URL" > .env
 
 # Log the contents of the .env file
 echo "The contents of the .env file are:"

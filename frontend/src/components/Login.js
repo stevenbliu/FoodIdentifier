@@ -32,6 +32,7 @@ function Login() {
 
         // Optionally, store the refresh token if needed
         localStorage.setItem('refresh_token', data.refresh);
+        localStorage.setItem('access_token', data.access);
 
         // Redirect to the dashboard
         navigate('/dashboard');

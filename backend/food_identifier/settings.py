@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-NGROK_PUBLIC_URL = os.getenv('NGROK_PUBLIC_URL')
 
 
 from dotenv import load_dotenv
@@ -33,6 +32,8 @@ DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_USER = os.getenv('DB_USER')
 DB_NAME = os.getenv('DB_NAME')
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+NGROK_PUBLIC_URL = os.getenv('REACT_APP_NGROK_PUBLIC_URL')
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -61,9 +62,12 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Add JWT Authentication
+    ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',  # Optional: Define default permission class
+    # ],
 }
 
 MIDDLEWARE = [
@@ -80,7 +84,9 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React dev server
-    f"http://{NGROK_PUBLIC_URL}"
+    # f"http://{NGROK_PUBLIC_URL}",
+    NGROK_PUBLIC_URL,
+    "http://backend:8000",
 ]
 
 CORS_ALLOW_METHODS = [
@@ -95,8 +101,6 @@ from corsheaders.defaults import default_headers
 CORS_ALLOW_HEADERS = default_headers + (
     'ngrok-skip-browser-warning',  # Allow the ngrok specific header if needed
 )
-
-
 
 ROOT_URLCONF = "food_identifier.urls"
 
@@ -177,8 +181,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # print("TEMPLATE LOADERS:", settings.TEMPLATES[0]['DIRS'])
 
 
+# NGROK_PUBLIC_URL.split("//")[1]
 
-ALLOWED_HOSTS = [NGROK_PUBLIC_URL, 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = [NGROK_PUBLIC_URL.split("//")[1], 'localhost', '127.0.0.1', "backend"]
 AUTH_USER_MODEL = 'authentication.CustomUser'
 
 LOGGING = {
@@ -216,6 +221,12 @@ LOGGING = {
 
 from datetime import timedelta
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Access token expiry time
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Refresh token expiry time
+    'ROTATE_REFRESH_TOKENS': False,  # Whether to rotate refresh tokens after each use
+    'BLACKLIST_AFTER_ROTATION': False,  # Optionally, blacklist tokens after rotation
+    'ALGORITHM': 'HS256',  # You can change this to another algorithm if needed
+    'SIGNING_KEY': SECRET_KEY,  # Replace with your actual secret key
+    'AUDIENCE': None,
+    'ISSUER': None,
 }

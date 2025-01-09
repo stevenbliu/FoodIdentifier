@@ -2,6 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+
 from django.conf import settings
 import boto3
 from .models import Photo
@@ -16,6 +18,38 @@ logging.basicConfig(
     format='%(asctime)s [%(levelname)s] - %(message)s',  # Format with timestamp and log level
     level=logging.INFO  # Set the log level (DEBUG, INFO, ERROR, etc.)
 )
+
+import jwt
+from jwt import ExpiredSignatureError, InvalidTokenError
+from jwt.exceptions import ExpiredSignatureError, DecodeError
+
+from datetime import datetime
+
+SECRET_KEY = settings.SECRET_KEY
+
+def check_token_expiration(token):
+    try:
+        # Decode the token (ensure secret key and algorithm match your setup)
+        decoded = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        exp_timestamp = decoded.get("exp")
+
+        if not exp_timestamp:
+            return {"status": "invalid", "error": "No expiration field in token"}
+
+        expiration_time = datetime.utcfromtimestamp(exp_timestamp)
+        current_time = datetime.utcnow()
+
+        if current_time >= expiration_time:
+            return {"status": "expired", "expiration_time": expiration_time}
+
+        return {"status": "valid", "expiration_time": expiration_time}
+
+    except ExpiredSignatureError:
+        return {"status": "expired", "expiration_time": None}
+    except DecodeError as e:
+        return {"status": "invalid", "error": str(e)}
+    except Exception as e:
+        return {"status": "invalid", "error": str(e)}
 
 logger = logging.getLogger(__name__)
 
@@ -96,6 +130,29 @@ class PhotoDetailView(APIView):
     """Handles retrieving metadata for a photo."""
     
     def get(self, request, id):
+        permission_classes = [IsAuthenticated]
+        ### 
+        logger.info(f"User: {request.user}, Auth: {request.auth}")  # Log user and token info
+        logger.info(f"request.auth type: {type(request.auth)} value: {request.auth}")
+        from rest_framework_simplejwt.tokens import AccessToken
+
+        if isinstance(request.auth, str):
+            token = request.auth.encode('utf-8')  # Convert to bytes
+        elif isinstance(request.auth, bytes):
+            token = request.auth  # Already in bytes
+        elif isinstance(request.auth, AccessToken):
+            token = str(request.auth).encode('utf-8')  # Convert AccessToken to string, then to bytes
+        else:
+            logger.error(f"Invalid token type: {type(request.auth)}")
+            token = None
+        result = check_token_expiration(token)
+        if result["status"] == "expired":
+             logger.info(f"Token expired at {result['expiration_time']}")
+        elif result["status"] == "valid":
+             logger.info(f"Token is valid until {result['expiration_time']}")
+        else:
+             logger.info(f"Invalid token: {result.get('error')}")
+        ###
         try:
             logger.info(f"Retrieving photo metadata for photo ID: {id}")
             photo = Photo.objects.get(id=id)

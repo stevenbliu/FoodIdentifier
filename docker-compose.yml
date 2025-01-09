@@ -45,8 +45,14 @@ services:
         max-size: "10m"
         max-file: "3"
         labels: "yes"
-    command: bash -c "./ngrok_url_fetcher.sh && python manage.py runserver"
+    command: bash -c "./ngrok_url_fetcher.sh && python manage.py runserver 0.0.0.0:8000"
     # command: tail -f /dev/null
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]  # Adjust if you have a health endpoint
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 5s
 
   frontend:
     build: ./frontend
@@ -70,6 +76,12 @@ services:
       - ./.env
     command: bash -c "./ngrok_url_fetcher.sh && npm start"
     # command: tail -f /dev/null
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]  # Adjust if you have a health endpoint
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 5s
 
   postgres_primary:
     image: postgres:13

@@ -1,5 +1,8 @@
 # food_identifier/ml.py
 import random
+import os
+
+CLARIFAI_PAT = os.getenv("CLARIFAI_PAT")
 
 def run_food_model(image_path):
     """
@@ -43,7 +46,7 @@ def run_food_api(image):
     # Example for predict by bytes:
     # model_prediction = Model(model_url).predict_by_bytes(image_bytes, input_type="text")
 
-    model_prediction = Model(url=model_url, pat="10fd8777e9e649a7928ff63c2fb159b4").predict_by_url(
+    model_prediction = Model(url=model_url, pat=CLARIFAI_PAT).predict_by_url(
         image_url, input_type="image"
     )
 

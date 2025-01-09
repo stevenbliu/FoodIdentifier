@@ -2,7 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom'; // Using Link for client-side routing
 import './Navbar.css'; // Import external CSS for styles
 
+import { useUser } from '../context/UserContext'; // For logout
+
 function Navbar() {
+  const { user, logout } = useUser(); // Access user and logout function
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -25,7 +29,7 @@ function Navbar() {
             <ul className="dropdown-menu">
               <li><Link to="/profile" className="dropdown-link">My Profile</Link></li>
               <li><Link to="/settings" className="dropdown-link">Settings</Link></li>
-              <li><Link to="/logout" className="dropdown-link">Logout</Link></li>
+              <li><Link onclick={logout} className="dropdown-link">Logout </Link></li>
             </ul>
           </li>
         </ul>

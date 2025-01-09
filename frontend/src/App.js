@@ -11,17 +11,19 @@ import Dashboard from './components/Dashboard';
 function App() {
   const { user, login, logout } = useUser(); // Get user state and authentication functions
 
-  // Skip login check if in development mode (or based on custom environment variable)
-  const skipLogin = process.env.REACT_APP_SKIP_LOGIN === 'true';
+  // Skip login based on environment variable
+  const skipLogin = process.env.REACT_APP_SKIP_LOGIN === 'true'; // Control login skip behavior
+  console.log('Skip login:', skipLogin); // Remove in production
 
   useEffect(() => {
-    if (skipLogin) {
+    // Only run this effect once (if skipLogin is true)
+    if (skipLogin && !user) {
       console.log('Development mode: Skipping login...');
       const fakeUser = { username: 'devUser', email: 'dev@user.com', id: 1 }; // Fake user data
       const fakeToken = 'dev-token-1234'; // Fake token
       login(fakeUser, fakeToken); // Log in with fake data
     }
-  }, [skipLogin, login]);
+  }, [skipLogin, user, login]); // Ensure the effect is only triggered once when skipLogin is true
 
   return (
     <Router>
