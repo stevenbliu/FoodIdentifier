@@ -1,6 +1,6 @@
 # FoodLens
 
-**FoodLens** is a web application that identifies foods in images and provides nutrition information using third-party APIs. 
+**FoodLens** is a web application that identifies foods in images and provides nutrition information.
 
 ## Features
 
@@ -11,15 +11,36 @@
 - **Scalability**: Automated image processing with AWS Lambda and Docker containers for scalable deployment.
 
 ## Technologies Used
+
+- **Front-end**: React
 - **Back-end**: Django
 - **Cloud**: AWS S3, AWS Lambda, SNS
 - **Data Stores**: PostgreSQL, Elasticsearch, Redis
 - **Containerization**: Docker
+- **Monitoring**: Prometheus, Grafana
+- **Other Tools**: Locust, Ngrok, Clarifai, Ggshield
 
 ## How to Run
-1. Clone the repository.
-2. Set up Docker and AWS credentials.
-3. Build and run the Docker containers using `docker-compose`.
+
+### Prerequisites
+
+Before running the application, ensure you have the following:
+
+- **Docker**: Installed and configured. [Docker installation guide](https://docs.docker.com/get-docker/)
+- **AWS credentials**: Make sure you have valid AWS credentials set up. You can use [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-aws.html) for setup.
+
+### 1. Clone the Repository 
+git clone https://github.com/yourusername/foodlens.git
+cd foodlens
+
+### 2. Build and Run Containers
+docker-compose build
+docker-compose up
+
+### 3. Access Application
+Frontend: Once the containers are running, you can access the React app by visiting http://localhost:3000.
+Backend: The Django backend will be available at http://localhost:8000.
+Pgadmin: http://localhost:5050.
 
 ## License
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. See the LICENSE file for more information.
