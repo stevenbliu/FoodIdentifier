@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { handleRequest } from './utils/fetchUtils'; // Import the fetch function
+import { handleRequest } from '../utils/fetchUtils'; // Import the fetch function
 
 const REACT_APP_NGROK_PUBLIC_URL = process.env.REACT_APP_NGROK_PUBLIC_URL;
 const PHOTO_URL = `${REACT_APP_NGROK_PUBLIC_URL}/photos`;

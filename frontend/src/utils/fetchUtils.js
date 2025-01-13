@@ -1,47 +1,37 @@
 // src/utils/fetchUtils.js
 const REACT_APP_NGROK_PUBLIC_URL = process.env.REACT_APP_NGROK_PUBLIC_URL;
-const PHOTO_URL = `${REACT_APP_NGROK_PUBLIC_URL}/photos`;
+const BACKEND_URL = `${REACT_APP_NGROK_PUBLIC_URL}/api/`;
 
-export const fetchWithHeaders = async (url, options) => {
-    const token = localStorage.getItem('access_token'); // Retrieve token from localStorage
-    console.log('fetchWithHeaders Token:', token);
-    const headers = {
-      'Content-Type': 'application/json',
-      'ngrok-skip-browser-warning': 63940,
-    };
+export const fetchWithHeaders = async (endpoint, options = {}) => {
+  const url = `${BACKEND_URL}${endpoint}`;
+  let token = localStorage.getItem('access_token');
 
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-  
-    const mergedOptions = { ...options, headers: { ...headers, ...options?.headers } };
-  
-    try {
-      console.log('Fetching data from:', url, 'with options:', mergedOptions);
-      const response = await fetch(url, mergedOptions);
-      
-      if (response.status === 401) {
-        // If the token is expired or invalid, attempt to refresh it
-        const newToken = await refreshAccessToken(); // Assume you have a function to refresh the token
-        if (newToken) {
-          headers['Authorization'] = `Bearer ${newToken}`;
-          const retryResponse = await fetch(url, { ...mergedOptions, headers });
-          return await retryResponse.json();
-        }
-      }
+  if (isTokenExpired(token)) {
+    token = await refreshAccessToken();
+  }
 
-      if (!response.ok) {
-        const responseText = await response.text();
-        console.error('Response body:', responseText);
-        throw new Error(`HTTP error! Status: ${response.status} - ${responseText}`);
-      }
-  
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      throw error;
-    }
+  const headers = {
+    'Content-Type': 'application/json',
+    'ngrok-skip-browser-warning': 63940,
+    Authorization: `Bearer ${token}`,
+    ...(options.headers || {}),
   };
+
+  const mergedOptions = { ...options, headers };
+
+  try {
+    const response = await fetch(url, mergedOptions);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Fetch error:', error);
+    throw error;
+  }
+};
 
 
 export const handleRequest = async (url, method = 'GET', data = null) => {
@@ -112,4 +102,9 @@ export const refreshAccessToken = async () => {
   }
 };
 
-  
+
+function isTokenExpired(token) {
+  if (!token) return true;
+  const payload = JSON.parse(atob(token.split('.')[1]));
+  return Date.now() >= payload.exp * 1000;
+}
