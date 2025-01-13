@@ -1,11 +1,5 @@
-#!/bin/bash
-# entrypoint.sh
+#! bin/bash/
 
+echo "Starting DJANGO backend Servce - REACT_APP_NGROK_PUBLIC_URL: $REACT_APP_NGROK_PUBLIC_URL"
 
-python manage.py makemigrations
-
-# Run migrations
-python manage.py migrate --noinput
-
-# Start the Django application
 exec "$@"

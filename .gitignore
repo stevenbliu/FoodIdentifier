@@ -43,3 +43,8 @@ coverage.xml
 
 # Other
 .cache_ggshield
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

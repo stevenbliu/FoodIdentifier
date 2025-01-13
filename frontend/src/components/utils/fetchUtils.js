@@ -1,4 +1,6 @@
 // src/utils/fetchUtils.js
+const REACT_APP_NGROK_PUBLIC_URL = process.env.REACT_APP_NGROK_PUBLIC_URL;
+const PHOTO_URL = `${REACT_APP_NGROK_PUBLIC_URL}/photos`;
 
 export const fetchWithHeaders = async (url, options) => {
     const token = localStorage.getItem('access_token'); // Retrieve token from localStorage

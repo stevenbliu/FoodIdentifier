@@ -12,8 +12,8 @@ class FoodLensUser(HttpUser):
     host = "http://localhost:8000"
     wait_time = between(1, 5)
 
-    def on_start(self):
-            self.client.post("/api/auth/login", json={"username": TEST_USERNAME, "password": TEST_PASSWORD})
+    # def on_start(self):
+    #         self.client.post("/api/auth/login", json={"username": TEST_USERNAME, "password": TEST_PASSWORD})
 
 
     @task

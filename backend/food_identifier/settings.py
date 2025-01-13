@@ -12,10 +12,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import logging
+
+logger = logging.getLogger(__name__)
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
 
 from dotenv import load_dotenv
 
@@ -32,7 +34,18 @@ DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_USER = os.getenv('DB_USER')
 DB_NAME = os.getenv('DB_NAME')
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
-NGROK_PUBLIC_URL = os.getenv('REACT_APP_NGROK_PUBLIC_URL')
+PUBLIC_URL = os.getenv('REACT_APP_NGROK_PUBLIC_URL')
+
+logger.info(f"NGROK_PUBLIC_URL: {PUBLIC_URL}")
+logger.info(f"DEVELOPER_ENV: {os.getenv('DEVELOPER_ENV')}")
+
+# Check if it's production or development environment
+if os.getenv('DEVELOPER_ENV') == '1':  # Production
+    BACKEND_URL = os.getenv('PROD_BACKEND_URL')
+    FRONTEND_URL = os.getenv('PROD_FRONTEND_URL')
+else:  # Development
+    BACKEND_URL = os.getenv('DEV_BACKEND_URL')
+    FRONTEND_URL = os.getenv('DEV_FRONTEND_URL')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -40,7 +53,7 @@ NGROK_PUBLIC_URL = os.getenv('REACT_APP_NGROK_PUBLIC_URL')
 # SECURITY WARNING: keep the secret key used in production secret!
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEVELOPER_ENV') == '1'
 
 
 
@@ -68,6 +81,14 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.IsAuthenticated',  # Optional: Define default permission class
     # ],
+    'DEFAULT_THROTTLE_CLASSES': [
+    'rest_framework.throttling.UserRateThrottle',  # Per user rate limit
+    'rest_framework.throttling.AnonRateThrottle',  # Correct name
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '5/hour',  # 5 requests per hour for authenticated users
+        'anon': '2/hour',  # 2 requests per hour for anonymous users
+    },
 }
 
 MIDDLEWARE = [
@@ -84,8 +105,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React dev server
-    # f"http://{NGROK_PUBLIC_URL}",
-    NGROK_PUBLIC_URL,
+    PUBLIC_URL,
     "http://backend:8000",
 ]
 
@@ -96,6 +116,11 @@ CORS_ALLOW_METHODS = [
     'DELETE',
     'OPTIONS',
 ]
+
+CORS_ORIGIN_WHITELIST = [
+    'https://example.com',
+]
+
 from corsheaders.defaults import default_headers
 
 CORS_ALLOW_HEADERS = default_headers + (
@@ -183,7 +208,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # NGROK_PUBLIC_URL.split("//")[1]
 
-ALLOWED_HOSTS = [NGROK_PUBLIC_URL.split("//")[1], 'localhost', '127.0.0.1', "backend"]
+ALLOWED_HOSTS = [PUBLIC_URL.split("//")[1], 'localhost', '127.0.0.1', "backend", '49de-76-126-145-131.ngrok-free.app']
 AUTH_USER_MODEL = 'authentication.CustomUser'
 
 LOGGING = {
@@ -203,21 +228,22 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console', 'file'],
-            'level': 'ERROR',
+            'level': 'INFO',
             'propagate': True,
         },
         'django.db.backend': {
             'handlers': ['console', 'file'],
-            'level': 'ERROR',
+            'level': 'INFO',
             'propagate': True,
         },
         'photo_handler': {
             'handlers': ['console', 'file'],
-            'level': 'DEBUG',
-            'propagate': False,
+            'level': 'INFO',
+            'propagate': True,
         },
     },
 }
+
 
 from datetime import timedelta
 SIMPLE_JWT = {
@@ -230,3 +256,4 @@ SIMPLE_JWT = {
     'AUDIENCE': None,
     'ISSUER': None,
 }
+
