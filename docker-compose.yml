@@ -1,5 +1,18 @@
 version: '3'
 services:
+
+  cypress:
+    build: ./cypress # 
+    environment:
+      - CYPRESS_baseUrl=http://host.docker.internal:3000  # Update for Mac/Windows
+    volumes:
+      - ./cypress/:/e2e/cypress # Mount your tests to the container
+      - ./cypress/cypress.config.js:/e2e/cypress.config.js # Mount the new configuration file
+    ports:
+      - 8888:8080
+    command: npx cypress run # Run tests on container start
+
+
   ngrok:
     build: ./ngrok
     command: bash -c "tail -f /dev/null"
