@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { fetchWithHeaders } from './utils/fetchUtils'; // Import the fetch function
+import { fetchAPI } from '../utils/fetchUtils'; // Import the fetchAPI function
 
 const REACT_APP_NGROK_PUBLIC_URL = process.env.REACT_APP_NGROK_PUBLIC_URL;
 const PHOTO_URL = `${REACT_APP_NGROK_PUBLIC_URL}/photos`;
@@ -24,14 +24,16 @@ function FileUpload({ setImageUrl }) {
     setIsUploading(true);
 
     try {
-      const createResponse = await fetchWithHeaders(`${PHOTO_URL}/create/`, {
+      // Step 1: Create the file and get the upload URL
+      const createResponse = await fetchAPI(`${PHOTO_URL}/create/`, {
         method: 'POST',
         body: JSON.stringify({ filename: file.name, file_size: file.size }),
-      });
+      }, true); // 'true' indicates authentication is required
 
-      const { url } = await createResponse;
+      const { url } = createResponse;
       if (!url) throw new Error('Invalid response from server.');
 
+      // Step 2: Upload the file to the obtained URL
       const uploadResponse = await fetch(url, {
         method: 'PUT',
         body: file,
@@ -39,7 +41,7 @@ function FileUpload({ setImageUrl }) {
       });
 
       if (uploadResponse.ok) {
-        setImageUrl(url);
+        setImageUrl(url); // Set the uploaded image URL
       } else {
         throw new Error('Image upload failed.');
       }

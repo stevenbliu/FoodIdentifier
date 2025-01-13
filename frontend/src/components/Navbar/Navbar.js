@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom'; // Using Link for client-side routing
 import './Navbar.css'; // Import external CSS for styles
 
-import { useUser } from '../context/UserContext'; // For logout
+import { useUser } from '../../context/UserContext'; // For logout
 
 function Navbar() {
   const { user, logout } = useUser(); // Access user and logout function

@@ -1,16 +1,7 @@
 version: '3'
 services:
-  # static-site:
-  #   image: dockersamples/static-site
-  #   build: ./static-site
-  #   ports:
-  #     - "8000:80"
-  #   restart: always
-
   ngrok:
-    # image: ngrok/ngrok:latest
     build: ./ngrok
-    # command: bash -c "/usr/local/bin/run_ngrok.sh && bash ngrok_url_fetcher.sh"
     command: bash -c "tail -f /dev/null"
     entrypoint: ["bash", "/usr/local/bin/entrypoint.sh"]  # Specify the custom script as the entrypoint
     environment:
@@ -63,8 +54,6 @@ services:
 
   frontend:
     build: ./frontend
-      # context: .  # Ensure this is the root of your project (where the docker-compose.yml is)
-      # dockerfile: frontend/Dockerfile  # Sp
     ports:
       - "3000:3000"
       # - 80:80 #prodction
@@ -87,7 +76,8 @@ services:
 
     # command: bash -c "./ngrok_url_fetcher.sh && npm start"
 # 
-    command: bash -c "npm run build && npm start"
+    # command: bash -c "npm run build && npm start"
+    command : bash -c "npm start"
     # command: tail -f /dev/null
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]  # Adjust if you have a health endpoint
@@ -96,27 +86,27 @@ services:
       start_period: 10s
       timeout: 5s
 
-  nginx:
-    build: ./nginx
-    ports:
-      - "8080:80"
-    volumes:
-      - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template  # Custom Nginx config
-      - ./frontend/build:/usr/share/nginx/html  # Copy the React build files to Nginx
-      - ./nginx/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro  # Mount the custom script
-    entrypoint: ["sh", "/usr/local/bin/entrypoint.sh"]  # Specify the custom script as the entrypoint
-    env_file:
-      - ./.env
-    environment:
-      - REACT_APP_NGROK_PUBLIC_URL=${REACT_APP_NGROK_PUBLIC_URL}
-    # depends_on:
-    #   - frontend
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080"]  # Adjust if you have a health endpoint
-      interval: 30s
-      retries: 3
-      start_period: 10s
-      timeout: 5s
+  # nginx:
+  #   build: ./nginx
+  #   ports:
+  #     - "8080:80"
+  #   volumes:
+  #     - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template  # Custom Nginx config
+  #     - ./frontend/build:/usr/share/nginx/html  # Copy the React build files to Nginx
+  #     - ./nginx/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro  # Mount the custom script
+  #   entrypoint: ["sh", "/usr/local/bin/entrypoint.sh"]  # Specify the custom script as the entrypoint
+  #   env_file:
+  #     - ./.env
+  #   environment:
+  #     - REACT_APP_NGROK_PUBLIC_URL=${REACT_APP_NGROK_PUBLIC_URL}
+  #   # depends_on:
+  #   #   - frontend
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8080"]  # Adjust if you have a health endpoint
+  #     interval: 30s
+  #     retries: 3
+  #     start_period: 10s
+  #     timeout: 5s
 
   postgres_primary:
     image: postgres:13

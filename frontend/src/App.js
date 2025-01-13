@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import Login from './components/Login';
-import Register from './components/Register';
+import Navbar from './components/Navbar/Navbar';
+import Footer from './components/Footer/Footer';
+import Login from './components/Authentication/Login';
+import Register from './components/Authentication/Register';
 import { useUser, UserProvider } from './context/UserContext';
-import Dashboard from './components/Dashboard';
+import Dashboard from './components/Dashboard/Dashboard';
 
 function App() {
   const { user, login, logout } = useUser(); // Get user state and authentication functions

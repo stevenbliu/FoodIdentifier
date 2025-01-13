@@ -1,11 +1,11 @@
 // components/Dashboard.js
 import React, { useState } from 'react';
-import UploadImage from './FileUpload';
-import TestButtons from './TestButtons';
-import FetchPhoto from './FetchPhoto';
-import { useUser } from '../context/UserContext'; // For logout
+import UploadImage from '../FileUpload';
+import TestButtons from '../TestButtons';
+import FetchPhoto from '../FetchPhoto';
+import { useUser } from '../../context/UserContext'; // For logout
 import './Dashboard.css';  // Optionally, you can style the dashboard
-import SubscribeNotifications from './SubscribeNotification';
+import SubscribeNotifications from '../SubscribeNotification';
 
 function Dashboard() {
   const { user, logout } = useUser(); // Access user and logout function
