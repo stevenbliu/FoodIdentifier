@@ -41,8 +41,9 @@ coverage.xml
 .pre-commit-config.yml
 
 # Cypress
-cypress/screenshots/
-cypress/videos/
+cypress/screenshots
+cypress/videos
+cypress/node_modules
 
 # Other
 .cache_ggshield

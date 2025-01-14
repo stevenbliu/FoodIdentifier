@@ -107,6 +107,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React dev server
     PUBLIC_URL,
     "http://backend:8000",
+    "http://host.docker.internal:3000",  # Your frontend URL
+
 ]
 
 CORS_ALLOW_METHODS = [
