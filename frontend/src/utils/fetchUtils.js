@@ -190,9 +190,14 @@ export const fetchAPI = async (endpoint, options = {}, requiresAuth = false) => 
   const url = `${BACKEND_URL}${endpoint}`;
   let headers = {
     'Content-Type': 'application/json',
-    'ngrok-skip-browser-warning': 63940,
+    // 'ngrok-skip-browser-warning': 63940,
     ...options.headers,
   };
+
+  if (process.env.DEVELOPER_ENV === '1') {
+    headers['ngrok-skip-browser-warning'] = 63940;
+  }
+  
 
   if (requiresAuth) {
     let token = localStorage.getItem('access_token');
@@ -214,6 +219,7 @@ export const fetchAPI = async (endpoint, options = {}, requiresAuth = false) => 
       throw new Error(`HTTP error: ${response.status} - ${errorDetails}`);
     }
     return await response.json();
+
   } catch (error) {
     console.error('Fetch error:', error);
     throw error;

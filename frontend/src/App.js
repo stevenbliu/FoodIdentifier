@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import './App.css';
+import './components/Authentication/AuthContainer.css';  // Add this to the top of your AuthContainer.js file
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
@@ -7,6 +8,7 @@ import Login from './components/Authentication/Login';
 import Register from './components/Authentication/Register';
 import { useUser, UserProvider } from './context/UserContext';
 import Dashboard from './components/Dashboard/Dashboard';
+import AuthContainer from './components/Authentication/AuthContainer';  // Import AuthContainer
 
 function App() {
   const { user, login, logout } = useUser(); // Get user state and authentication functions
@@ -40,11 +42,7 @@ function App() {
                 skipLogin || user ? (
                   <Navigate to="/dashboard" /> // Automatically go to dashboard if skipLogin or user exists
                 ) : (
-                  <>
-                    <h2>Please log in or register</h2>
-                    <Login />
-                    <Register />
-                  </>
+                  <AuthContainer />  // Render AuthContainer if not logged in
                 )
               }
             />

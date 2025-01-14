@@ -1,4 +1,6 @@
 import { fetchAPI} from './fetchUtils';
+// import { useUser } from '../../context/UserContext'; // Import user context
+
 // This handles the actual registration logic, including network requests and processing the response.
 
 /**
@@ -20,5 +22,32 @@ export const registerUser = async (email, password) => {
   } catch (error) {
     console.error('Error during user registration:', error);
     throw new Error(error.message || 'Unable to register.');
+  }
+};
+
+
+export const loginUser  = async (email, password, login) => {
+  // API-Logic
+  // Response Logic
+  // const { login } = useUser(); // Access login function from context
+
+  try {
+    const data = await fetchAPI('auth/login/', {
+      method: 'POST',
+      body: JSON.stringify({ username: email, password }),
+        },
+    false);
+
+    // Store user info and tokens
+    login(data.user, data.access);  // Pass user data and access token
+
+    // Optionally, store the refresh token if needed
+    localStorage.setItem('refresh_token', data.refresh);
+    localStorage.setItem('access_token', data.access);
+
+    return data.user; // Return useful data
+  } catch (error) {
+    console.error('Error during user login:', error);
+    throw new Error(error.message || 'Unable to login.');
   }
 };

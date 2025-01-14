@@ -62,7 +62,7 @@ class LoginView(APIView):
             "user": {
                 "username": user.username,
             }
-        })
+        }, status=200)
 
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
