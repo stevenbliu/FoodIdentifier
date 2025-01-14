@@ -40,6 +40,9 @@ coverage.xml
 # Pre-commit hook files
 .pre-commit-config.yml
 
+# Cypress
+cypress/screenshots/
+cypress/videos/
 
 # Other
 .cache_ggshield
