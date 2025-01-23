@@ -52,3 +52,8 @@ cypress/node_modules
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+# K8s Manifests
+env-configmap.yaml
+Secrets.yaml
+

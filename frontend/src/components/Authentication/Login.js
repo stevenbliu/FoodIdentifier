@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useUser } from '../../context/UserContext'; // Import user context
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../utils/authUtils'; // Import loginUser function
+// import './Login.css'; // Import the updated CSS
 
 const Login = () => {
   const { login } = useUser(); // Access login function from context
@@ -12,6 +13,11 @@ const Login = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault(); // Prevent default form submission
+
+    if (!email || !password) {
+      setError("Both fields are required.");
+      return;
+    }
 
     try {
       console.log('Logging in...');
@@ -30,28 +36,34 @@ const Login = () => {
   };
 
   return (
-    <div className="login-form">
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Login</button>
-      </form>
-      {error && <p>{error}</p>} {/* Display error message */}
-    </div>
+      <div className="login-form">
+        <h2>Login</h2>
+        <form onSubmit={handleLogin}>
+          <div className="input-group">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="input-field"
+            />
+          </div>
+          <div className="input-group">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="input-field"
+            />
+          </div>
+          <button type="submit" className="submit-button">Login</button>
+        </form>
+        {error && <p className="error-message">{error}</p>} {/* Display error message */}
+      </div>
   );
-}
+};
 
 export default Login;

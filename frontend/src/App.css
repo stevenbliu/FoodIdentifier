@@ -1,155 +1,103 @@
-/* App.css */
+/* Global Styles */
+:root {
+  --primary-color: black;
+  --secondary-color: darkblue;
+  --text-color: #333;
+  --background-color: #f4f4f4;
+  --card-bg-color: #fff;
+  --font-family: 'Roboto', sans-serif;
+  --font-size: 16px;
+  --transition-speed: 0.3s;
+  --background: url('https://images.unsplash.com/photo-1506748686213-f46c238f5b0f') no-repeat center center fixed; /* Food-themed background */
 
-/* General styling */
+}
+
+/* Background Image for App */
 body {
-  font-family: 'Arial', sans-serif;
-  background-color: #f4f4f9;
-  margin: 0;
-  padding: 0;
+  font-family: var(--font-family);
+  background: url('https://images.unsplash.com/photo-1506748686213-f46c238f5b0f') no-repeat center center fixed; /* Food-themed background */
+  background-size: cover; /* Make sure the image covers the entire viewport */
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.App {
   display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white overlay for contrast */
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.App-header {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  padding: 20px;
+  background: var(--primary-color);
+  color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s ease;
 }
 
-/* Header styling */
-.App-header {
+.App-header:hover {
+  background: var(--secondary-color);
+}
+
+footer {
+  padding: 20px;
+  background: var(--background-color);
   text-align: center;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  max-width: 400px;
-  width: 100%;
-  margin: 20px;
+  border-top: 1px solid #ddd;
 }
 
-/* Main title styling */
-h1 {
-  color: #333;
-  font-size: 24px;
-  margin-bottom: 20px;
+footer a {
+  color: var(--primary-color);
+  font-weight: bold;
+  transition: color var(--transition-speed);
 }
 
-/* Button container styling */
-.button-container {
-  margin: 20px 0;
+footer a:hover {
+  color: var(--secondary-color);
+}
+
+/* Flexbox Container for Navbar */
+.Navbar {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
-}
-
-/* Input styling */
-input[type="file"] {
-  margin-bottom: 10px;
-}
-
-input[type="text"], input[type="file"] {
-  padding: 10px;
-  font-size: 16px;
-  width: 80%;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-bottom: 10px;
-  transition: border-color 0.3s ease;
-}
-
-input[type="text"]:focus, input[type="file"]:focus {
-  border-color: #007BFF;
-  outline: none;
-}
-
-/* Button styling */
-button {
-  padding: 12px 20px;
-  background-color: #007BFF;
+  padding: 10px 20px;
+  background-color: var(--primary-color);
   color: white;
-  font-size: 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 80%;
-  transition: background-color 0.3s ease;
-  margin: 5px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-button:hover {
-  background-color: #0056b3;
+.Navbar .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-/* Image styling */
-.uploaded-image {
-  margin-top: 20px;
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Food info section styling */
-.food-info {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.food-info h2 {
-  font-size: 20px;
-  color: #333;
-}
-
-.food-info p {
-  color: #555;
-  font-size: 16px;
-}
-
-
-/* App.css */
-
-/* Form styling */
-.login-form, .register-form {
+.Navbar ul {
+  list-style: none;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 400px;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: #fff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  gap: 15px;
 }
 
-input[type="email"], input[type="password"] {
-  padding: 10px;
-  margin: 10px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  width: 100%;
+.Navbar li {
+  display: inline;
 }
 
-button {
-  padding: 10px;
-  background-color: #007BFF;
+.Navbar a {
   color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: color var(--transition-speed);
 }
 
-button:hover {
-  background-color: #0056b3;
-}
-
-p {
-  color: red;
+.Navbar a:hover {
+  color: var(--secondary-color);
 }

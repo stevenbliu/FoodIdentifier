@@ -162,7 +162,7 @@ DATABASES = {
         'NAME': DB_NAME,
         'USER': DB_USER,
         'PASSWORD': DB_PASSWORD,
-        'HOST': 'postgres_primary',
+        'HOST': 'postgres-primary',
         'PORT': '5432',
     }
 }

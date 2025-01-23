@@ -1,37 +1,64 @@
-/* components/Dashboard.css */
-.dashboard {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+/* Dashboard.css */
+.dashboard-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logout-button {
+  padding: 10px 20px;
+  background-color: #ff5733;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background-color: #c44536;
+}
+
+.dashboard-body {
+  margin-top: 20px;
+}
+
+.uploaded-image {
+  max-width: 100%;
+  height: auto;
+  margin-top: 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.food-info {
+  margin-top: 20px;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .login-container,
+  .dashboard-container {
+    width: 100%;
+    padding: 10px;
   }
   
-  .dashboard h2 {
-    font-size: 2rem;
-    color: #333;
+  .login-input,
+  .login-button {
+    font-size: 16px;
   }
   
   .uploaded-image {
-    max-width: 100%;
-    margin-top: 20px;
+    width: 100%;
+    height: auto;
   }
-  
-  .food-info {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-  }
-  
-  button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
+}

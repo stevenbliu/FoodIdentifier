@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml --out ./k8s-manifests
+    kompose.version: 1.35.0 (9532ceef3)
+  labels:
+    io.kompose.service: postgres-primary
+  name: postgres-primary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: postgres-primary
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yml --out ./k8s-manifests
+        kompose.version: 1.35.0 (9532ceef3)
+      labels:
+        io.kompose.service: postgres-primary
+    spec:
+      containers:
+        - name: postgres-primary
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: my-app-secrets
+                  key: DB_NAME
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: my-app-secrets
+                  key: DB_PASSWORD
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: my-app-secrets
+                  key: DB_USER
+          image: postgres:13
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - user
+                - -d
+                - dbname
+            failureThreshold: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          name: postgres-primary
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          resources:
+            requests:
+              memory: "500Mi"
+            limits:
+              memory: "1Gi"
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-data-primary
+            - mountPath: /docker-entrypoint-initdb.d/init_pg_hba.sh
+              name: postgres-primary-cm1
+              subPath: init_pg_hba.sh
+            - mountPath: /docker-entrypoint-initdb.d/init_primary.sql
+              name: postgres-primary-cm2
+              subPath: init_primary.sql
+      restartPolicy: Always
+      volumes:
+        - name: postgres-data-primary
+          persistentVolumeClaim:
+            claimName: postgres-data-primary
+        - configMap:
+            items:
+              - key: init_pg_hba.sh
+                path: init_pg_hba.sh
+            name: postgres-primary-cm1
+          name: postgres-primary-cm1
+        - configMap:
+            items:
+              - key: init_primary.sql
+                path: init_primary.sql
+            name: postgres-primary-cm2
+          name: postgres-primary-cm2
