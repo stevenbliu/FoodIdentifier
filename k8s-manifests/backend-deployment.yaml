@@ -65,9 +65,9 @@ spec:
                   name: env
             - name: DATABASE_URL
               valueFrom:
-                configMapKeyRef:
+                secretKeyRef:
                   key: DB_URL
-                  name: env
+                  name: my-app-secrets
             - name: DB_HOST
               valueFrom:
                 configMapKeyRef:

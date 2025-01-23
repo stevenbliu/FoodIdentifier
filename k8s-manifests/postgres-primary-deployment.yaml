@@ -40,6 +40,11 @@ spec:
                 secretKeyRef:
                   name: my-app-secrets
                   key: DB_USER
+            - name: DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: my-app-secrets
+                  key: DB_URL
           image: postgres:13
           livenessProbe:
             exec:

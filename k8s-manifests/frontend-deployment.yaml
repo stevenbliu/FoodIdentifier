@@ -24,9 +24,12 @@ spec:
     spec:
       containers:
         - args:
-            - bash
-            - -c
-            - npm start
+            # - bash
+            # - -c
+            # - npm start
+            - tail
+            - -f
+            - /dev/null
           env:
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
@@ -168,7 +171,7 @@ spec:
               value: "true"
             - name: WDS_SOCKET_PORT
               value: "3000"
-          image: frontend
+          image: sdevinl/foodidentifier-frontend:latest
           livenessProbe:
             exec:
               command:
@@ -184,17 +187,17 @@ spec:
             - containerPort: 3000
               protocol: TCP
           volumeMounts:
-            - mountPath: /app
-              name: frontend-cm0
+            # - mountPath: /app
+            #   name: frontend-cm0
             - mountPath: /app/build
               name: frontend-cm1
             - mountPath: /app/node_modules
               name: frontend-claim2
       restartPolicy: Always
       volumes:
-        - configMap:
-            name: frontend-cm0
-          name: frontend-cm0
+        # - configMap:
+        #     name: frontend-cm0
+        #   name: frontend-cm0
         - configMap:
             name: frontend-cm1
           name: frontend-cm1

@@ -14,3 +14,5 @@ spec:
       targetPort: 8000
   selector:
     io.kompose.service: backend
+  type: LoadBalancer   # Exposes service externally via a LoadBalancer
+
