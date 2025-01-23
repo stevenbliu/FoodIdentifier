@@ -53,7 +53,11 @@ decorator==5.1.1
 Pygments==2.18.0
 psycopg2==2.9.10
 pyzmq==26.2.0
-pywin32
+
+# pywin32 is excluded for Ubuntu or other non-Windows platforms
+# tornado and traitlets are cross-platform compatible
 tornado==6.4.1
 traitlets==5.14.3
 tzdata==2024.2
+
+pywin32; sys_platform == "win32"
