@@ -1,13 +1,10 @@
 # Django and Related Dependencies
 django>=4.2
-django-redis
-django-cors-headers
-
-# Database and ORM Dependencies
-psycopg2
+django-redis>=5.2,<6.0
+django-cors-headers>=3.14,<4.0
 
 # Caching Dependencies
-redis
+redis>=4.5,<5.0
 
 # AWS SDK and Utilities
 boto3>=1.35.82
@@ -43,20 +40,20 @@ setuptools==75.1.0
 wheel==0.44.0
 
 # Optional Dependencies (Uncomment if required)
-# pytest==7.3.1
-# pytest-django==4.5.2
+pytest==7.3.1
+pytest-django==4.5.2
 
 # Additional Dependencies
 asgiref==3.8.1
 djangorestframework==3.15.2
-djangorestframework-simplejwt
+djangorestframework-simplejwt>=5.3,<6.0
 
 debugpy==1.8.7
 decorator==5.1.1
 Pygments==2.18.0
 psycopg2==2.9.10
 pyzmq==26.2.0
-# pywin32==308
+pywin32==308
 tornado==6.4.1
 traitlets==5.14.3
 tzdata==2024.2
