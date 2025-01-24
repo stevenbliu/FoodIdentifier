@@ -2,13 +2,35 @@
 
 **FoodLens** is a web application that identifies foods in images and provides nutrition information.
 
-## Features
+## MVP (Minimal Viable Product)
+- **Image Recognition of Food Items**: Users take a photo of their meal, then AI identifies food items
+- **Nutritional Info**: Provides basic nutritional data from recognized items
+- **Interface**: Simple UI for uploading photos and viewing results
 
-- **Back-end**: Developed using Django to manage user-uploaded food images, metadata, and notifications through AWS SNS.
-- **Image Metadata**: Processes and stores image data like size, S3 URL, and checksum.
+## Current Features:
+- **Back-end**: Developed using Django to manage user-uploaded food images, metadata,
+- **Notifications**: Notifications of recognition status from AWS SNS.
 - **Data Storage**: Utilizes AWS S3, PostgreSQL, and Elasticsearch for efficient storage and querying.
+- **Scalability**: Kubernetes and Docker containers for scalable deployment.
+- **Testing**: Runs unit, integration, and e2e tests with UnitTest, PyTest, GitHub Actions, Cypress, Locust
+- **User System**: Features require user profile which is authenticated with JWT with Refresh Tokens
+- **Read-Write Databases**: Implemented read-only replicas of primary PostgreSQL database for optimized reading 
+- **Load Balacning**: With NGINX revse proxy
+- **Montioring**: With Prometheus and Grafana
+- **Third-Party API for Image Recognition**: Uses Clarifai API with rate-limiting implemented
+- **Hooks**: Pre-commit hooks with ggshield and detect-secrets to check for sensitive data on before commits
+
+
+## Enhancements
 - **Caching**: Redis integration to cache frequently queried food items, improving performance.
-- **Scalability**: Automated image processing with AWS Lambda and Docker containers for scalable deployment.
+- **Sharding**: By users or food types 
+- **Indexing**: By users or food types
+- **Meal Logging**: ...
+- **Fault Tolerance to API**: Circuit Breaker with Hystrix
+- **Retry Mechanism**: With tenacity or resilience4j
+- **Message Queue**: Kafka/RabbitMQ
+- **Optimistic/Pessimistic Locking**: to handle concurrency
+- **Nutrition Data**: 
 
 ## Technologies Used
 
