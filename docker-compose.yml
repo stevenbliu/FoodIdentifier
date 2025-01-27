@@ -46,10 +46,10 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - postgres_primary
+      - postgres-primary
       - ngrok
     environment:
-      - DATABASE_URL=postgres://user:password@postgres_primary:5432/dbname
+      - DATABASE_URL=postgres://user:password@postgres-primary:5432/dbname
       - REACT_APP_API_URL=http://backend:8000  # Use internal backend service
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
@@ -121,7 +121,7 @@ services:
   #     start_period: 10s
   #     timeout: 5s
 
-  postgres_primary:
+  postgres-primary:
     image: postgres:13
     environment:
       POSTGRES_USER: ${DB_USER} 
@@ -148,19 +148,19 @@ services:
     cpu_quota: 100000
     cpu_period: 100000
 
-  postgres_replica:
+  postgres-replica:
     image: postgres:13
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: replicadb
-      POSTGRES_PRIMARY_HOST: postgres_primary
+      POSTGRES_PRIMARY_HOST: postgres-primary
       POSTGRES_PRIMARY_PORT: 5432
       POSTGRES_REPLICATION_USER: replication_user
       POSTGRES_REPLICATION_PASSWORD: ${DB_PASSWORD}
       POSTGRES_HOST_AUTH_METHOD: md5
     depends_on:
-        postgres_primary:
+        postgres-primary:
           condition: service_healthy  # Waits for the primary to be healthy before starting
     volumes:
       - postgres_data_replica:/var/lib/postgresql/data
@@ -180,7 +180,7 @@ services:
       - "5050:80"
     depends_on:
       # - db
-      - postgres_primary
+      - postgres-primary
     volumes:
       - pgadmin_data:/var/lib/pgadmin
 
