@@ -1,21 +1,20 @@
-import React from 'react';
-import { Link } from 'react-router-dom'; // Using Link for client-side routing
-import './Navbar.css'; // Import external CSS for styles
-
-import { useUser } from '../../context/UserContext'; // For logout
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useUser } from '../../context/UserContext';
+import './Navbar.css';
+import LoginModal from '../Authentication/LoginModal'; // Import the modal component
 
 function Navbar() {
-  const { user, logout } = useUser(); // Access user and logout function
+  const { user, logout } = useUser();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        {/* Logo Section */}
         <div className="logo">
           <Link to="/" className="logo-link">Food Identifier</Link>
         </div>
 
-        {/* Menu Section */}
         <ul className="navbar-menu">
           <li className="navbar-item">
             <Link to="/" className="navbar-link">Home</Link>
@@ -23,17 +22,30 @@ function Navbar() {
           <li className="navbar-item">
             <Link to="/upload" className="navbar-link">Upload</Link>
           </li>
-          {/* Add more items here */}
+
           <li className="navbar-item dropdown">
             <span className="navbar-link">Profile</span>
             <ul className="dropdown-menu">
-              <li><Link to="/profile" className="dropdown-link">My Profile</Link></li>
-              <li><Link to="/settings" className="dropdown-link">Settings</Link></li>
-              <li><Link onclick={logout} className="dropdown-link">Logout </Link></li>
+              {user ? (
+                <>
+                  <li><Link to="/profile" className="dropdown-link">My Profile</Link></li>
+                  <li><Link to="/settings" className="dropdown-link">Settings</Link></li>
+                  <li><span onClick={logout} className="dropdown-link">Logout</span></li>
+                </>
+              ) : (
+                <li>
+                  <span onClick={() => setIsModalOpen(true)} className="dropdown-link">
+                    Register/Login
+                  </span>
+                </li>
+              )}
             </ul>
           </li>
         </ul>
       </div>
+
+      {/* Login/Register Modal */}
+      {isModalOpen && <LoginModal onClose={() => setIsModalOpen(false)} />}
     </nav>
   );
 }

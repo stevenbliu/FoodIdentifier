@@ -1,5 +1,5 @@
 django>=3.2,<4
-psycopg2
+psycopg2-binary>=2.9,<3.0
 redis
 django-redis
 # asgiref @ file:///C:/b/abs_ae1n0p_8_w/croot/asgiref_1724072476516/work
@@ -46,3 +46,4 @@ traitlets==5.14.3
 urllib3==2.2.3
 wcwidth==0.2.13
 wheel==0.44.0
+gunicorn==23.0.0

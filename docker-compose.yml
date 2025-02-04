@@ -1,4 +1,4 @@
-version: '3'
+# version: '3'
 services:
 
   # cypress:
@@ -38,7 +38,8 @@ services:
 
 
   backend:
-    build: ./backend
+    # build: ./backend # local 
+    image: sdevinl/foodidentifier-backend:latest
     volumes:
       - ./backend:/app
       - ./backend/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro  # Mount the custom script
@@ -46,7 +47,7 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - postgres-primary
+      # - postgres-primary
       - ngrok
     environment:
       - DATABASE_URL=postgres://user:password@postgres-primary:5432/dbname
@@ -57,9 +58,10 @@ services:
       - ./.env
     entrypoint: ["bash", "/usr/local/bin/entrypoint.sh"]  # Specify the custom script as the entrypoint
     command: bash -c "python manage.py runserver 0.0.0.0:8000"
+    # command: bash -c "gunicorn myproject.wsgi:application --bind 0.0.0.0:8000"
     # command: tail -f /dev/null
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/photos"]  # Adjust if you have a health endpoint
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/test/"]  # Adjust if you have a health endpoint
       interval: 30s
       retries: 3
       start_period: 10s
@@ -72,7 +74,7 @@ services:
       # - 80:80 #prodction
     depends_on:
       - backend
-      - ngrok
+      # - ngrok
     environment:
       - REACT_APP_API_URL=http://backend:8000  # Use internal backend service
       - CHOKIDAR_USEPOLLING=true
@@ -86,9 +88,7 @@ services:
       - ./frontend:/app
       - ./frontend/build:/app/build  # Mount the build output into the shared folder
       - /app/node_modules  # Optional: This ensures node_modules are not overridden by your local system
-
     # command: bash -c "./ngrok_url_fetcher.sh && npm start"
-# 
     # command: bash -c "npm run build && npm start"
     command : bash -c "npm start"
     # command: tail -f /dev/null
@@ -121,68 +121,68 @@ services:
   #     start_period: 10s
   #     timeout: 5s
 
-  postgres-primary:
-    image: postgres:13
-    environment:
-      POSTGRES_USER: ${DB_USER} 
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-      # PGDATA: /var/lib/postgresql/data  # New directory to store data
-      # POSTGRES_INITDB_WALDIR: /var/lib/postgresql/data/pg_wal
-    volumes:
-      - postgres_data_primary:/var/lib/postgresql/data
-      - ./postgres/init_pg_hba.sh:/docker-entrypoint-initdb.d/init_pg_hba.sh
-      - ./postgres/init_primary.sql:/docker-entrypoint-initdb.d/init_primary.sql
-    ports:
-      - "5432:5432"
-    expose:
-      - "5432"  # Exposed for replication
-    # user: postgres
-    # command: ["bash", "-c", "rm -rf /var/lib/postgresql/data/* && initdb -D /var/lib/postgresql/data && postgres"]
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "user", "-d", "dbname"]
-      interval: 10s
-      retries: 5
-      timeout: 5s
-    mem_limit: 4g
-    cpu_quota: 100000
-    cpu_period: 100000
+  # postgres-primary:
+  #   image: postgres:13
+  #   environment:
+  #     POSTGRES_USER: ${DB_USER} 
+  #     POSTGRES_PASSWORD: ${DB_PASSWORD}
+  #     POSTGRES_DB: ${DB_NAME}
+  #     # PGDATA: /var/lib/postgresql/data  # New directory to store data
+  #     # POSTGRES_INITDB_WALDIR: /var/lib/postgresql/data/pg_wal
+  #   volumes:
+  #     - postgres_data_primary:/var/lib/postgresql/data
+  #     - ./postgres/init_pg_hba.sh:/docker-entrypoint-initdb.d/init_pg_hba.sh
+  #     - ./postgres/init_primary.sql:/docker-entrypoint-initdb.d/init_primary.sql
+  #   ports:
+  #     - "5432:5432"
+  #   expose:
+  #     - "5432"  # Exposed for replication
+  #   # user: postgres
+  #   # command: ["bash", "-c", "rm -rf /var/lib/postgresql/data/* && initdb -D /var/lib/postgresql/data && postgres"]
+  #   healthcheck:
+  #     test: ["CMD", "pg_isready", "-U", "user", "-d", "dbname"]
+  #     interval: 10s
+  #     retries: 5
+  #     timeout: 5s
+  #   mem_limit: 4g
+  #   cpu_quota: 100000
+  #   cpu_period: 100000
 
-  postgres-replica:
-    image: postgres:13
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: replicadb
-      POSTGRES_PRIMARY_HOST: postgres-primary
-      POSTGRES_PRIMARY_PORT: 5432
-      POSTGRES_REPLICATION_USER: replication_user
-      POSTGRES_REPLICATION_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_HOST_AUTH_METHOD: md5
-    depends_on:
-        postgres-primary:
-          condition: service_healthy  # Waits for the primary to be healthy before starting
-    volumes:
-      - postgres_data_replica:/var/lib/postgresql/data
-      - ./postgres/init_replica.sh:/docker-entrypoint-initdb.d/init_replica.sh
-    ports:
-      - "5433:5432"  # Expose different port for replica
-    mem_limit: 4g
-    cpu_quota: 100000
-    cpu_period: 100000
+  # postgres-replica:
+  #   image: postgres:13
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: ${DB_PASSWORD}
+  #     POSTGRES_DB: replicadb
+  #     POSTGRES_PRIMARY_HOST: postgres-primary
+  #     POSTGRES_PRIMARY_PORT: 5432
+  #     POSTGRES_REPLICATION_USER: replication_user
+  #     POSTGRES_REPLICATION_PASSWORD: ${DB_PASSWORD}
+  #     POSTGRES_HOST_AUTH_METHOD: md5
+  #   depends_on:
+  #       postgres-primary:
+  #         condition: service_healthy  # Waits for the primary to be healthy before starting
+  #   volumes:
+  #     - postgres_data_replica:/var/lib/postgresql/data
+  #     - ./postgres/init_replica.sh:/docker-entrypoint-initdb.d/init_replica.sh
+  #   ports:
+  #     - "5433:5432"  # Expose different port for replica
+  #   mem_limit: 4g
+  #   cpu_quota: 100000
+  #   cpu_period: 100000
 
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "5050:80"
-    depends_on:
-      # - db
-      - postgres-primary
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@example.com
+  #     PGADMIN_DEFAULT_PASSWORD: ${DB_PASSWORD}
+  #   ports:
+  #     - "5050:80"
+  #   depends_on:
+  #     # - db
+  #     - postgres-primary
+  #   volumes:
+  #     - pgadmin_data:/var/lib/pgadmin
 
   # elasticsearch:
   #   image: elastic/elasticsearch:8.16.2
@@ -247,17 +247,17 @@ services:
   #   ports:
   #     - "9187:9187"
 
-  locust:
-    image: locustio/locust
+  # locust:
+  #   image: locustio/locust
       
-    ports:
-      - "8089:8089"  # Expose Locust Web UI on port 8089
-    volumes:
-      - ./locust/locustfile.py:/locustfile.py  # Mount your Locust file with test scenarios
-    depends_on:
-      - backend  # Ensure backend is up before running Locust
-    command: tail -f /dev/null  # Keep the container running
-    # command: locust -f /locustfile.py --host=http://backend:8000
+  #   ports:
+  #     - "8089:8089"  # Expose Locust Web UI on port 8089
+  #   volumes:
+  #     - ./locust/locustfile.py:/locustfile.py  # Mount your Locust file with test scenarios
+  #   depends_on:
+  #     - backend  # Ensure backend is up before running Locust
+  #   command: tail -f /dev/null  # Keep the container running
+  #   # command: locust -f /locustfile.py --host=http://backend:8000
 
 
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { fetchAPI } from '../utils/fetchUtils'; // Import the fetchAPI function
 
-const BASE_ENDPOINT = '/photos';
+const BASE_ENDPOINT = 'photos';
 
 function FetchPhotoDetails() {
   const [photoId, setPhotoId] = useState('');

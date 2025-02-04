@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { fetchAPI } from '../utils/fetchUtils'; // Import the fetchAPI function
 
 const REACT_APP_NGROK_PUBLIC_URL = process.env.REACT_APP_NGROK_PUBLIC_URL;
-const PHOTO_URL = `${REACT_APP_NGROK_PUBLIC_URL}/photos`;
+const PHOTO_URL = `photos`;
 
 function FileUpload({ setImageUrl }) {
   const [file, setFile] = useState(null);

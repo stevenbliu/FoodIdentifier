@@ -6,7 +6,12 @@ from authentication.models import CustomUser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import AuthenticationFailed
 from jwt.exceptions import ExpiredSignatureError
-from .models import RefreshTokenModel  # A model to store refresh tokens securely
+# from .models import RefreshTokenModel  # A custom model to store refresh tokens securely
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import status
+
+from rest_framework.permissions import AllowAny  # Allow unauthenticated access
+
 from datetime import timedelta
 from django.utils import timezone
 from django.db import IntegrityError
@@ -16,6 +21,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 class RegisterView(APIView):
+    permission_classes = [AllowAny]  # Allow unauthenticated users
+
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
@@ -31,7 +38,12 @@ class RegisterView(APIView):
         return Response({"message": "User created successfully"}, status=201)
 
 class LoginView(APIView):
+    permission_classes = [AllowAny]  # Allow unauthenticated users
+
     def post(self, request):
+        
+        logger.info(f"Login attempt for user {request.data.get('username')}")
+        
         username = request.data.get('username')
         password = request.data.get('password')
 
@@ -39,30 +51,39 @@ class LoginView(APIView):
         if not user:
             return Response({"error": "Invalid credentials"}, status=400)
 
-        refresh = RefreshToken.for_user(user)
-        access_token = str(refresh.access_token)
-        logger.info(f"User {username} logged in.")
+
 
         try:
-            stored_token, created = RefreshTokenModel.objects.update_or_create(
-                user=user,
-                defaults={'refresh_token': str(refresh)}
-            )
+            # storing tokens
+            # stored_token, created = RefreshToken.objects.update_or_create(
+            #     user=user,
+            #     defaults={'refresh_token': str(refresh)}
+            # )
+            
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            logger.info(f"User {username} logged in.")
 
-            if created:
-                logger.info(f"New refresh token created for user {user.username}")
-            else:
-                logger.info(f"Refresh token updated for user {user.username}")
+            # if created:
+            logger.info(f"New refresh token created for user {user.username}")
+            
+            return Response({
+            'refresh': str(refresh),
+            'access': access_token
+            }, status=status.HTTP_200_OK)
+                
+            # else:
+                # logger.info(f"Refresh token updated for user {user.username}")
         except IntegrityError as e:
             logger.error(f"Error during token save: {str(e)}")
 
-        return Response({
-            "refresh": str(refresh),
-            "access": str(refresh.access_token),
-            "user": {
-                "username": user.username,
-            }
-        }, status=200)
+        # return Response({
+        #     "refresh": str(refresh),
+        #     "access": str(refresh.access_token),
+        #     "user": {
+        #         "username": user.username,
+        #     }
+        # }, status=200)
 
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]

@@ -1,14 +1,15 @@
 import React from 'react';
+import { fetchAPI } from '../utils/fetchUtils'; // Import the fetchAPI function
 
 const REACT_APP_NGROK_PUBLIC_URL = process.env.REACT_APP_NGROK_PUBLIC_URL;
-const PHOTO_URL = `${REACT_APP_NGROK_PUBLIC_URL}/photos`;
+const PHOTO_URL = `photos`;
 
 function TestRequest() {
   const sendTestRequest = async () => {
     try {
-      const response = await fetch(`${PHOTO_URL}/inject-test-data/`, { method: 'POST' });
-      const data = await response.json();
-      console.log('Test request response:', data);
+      const response = await fetchAPI(`${PHOTO_URL}/inject-test-data/`, { method: 'GET' }, true);
+      // const data = await response.json();
+      console.log('Test request response:', response);
     } catch (error) {
       console.error('Error sending test request:', error);
     }

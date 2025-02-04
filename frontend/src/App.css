@@ -1,6 +1,6 @@
 /* Global Styles */
 :root {
-  --primary-color: black;
+  --primary-color: gray;
   --secondary-color: darkblue;
   --text-color: #333;
   --background-color: #f4f4f4;
@@ -44,9 +44,9 @@ body {
   transition: background 0.3s ease;
 }
 
-.App-header:hover {
+/* .App-header:hover {
   background: var(--secondary-color);
-}
+} */
 
 footer {
   padding: 20px;

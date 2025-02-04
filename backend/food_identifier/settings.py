@@ -24,36 +24,58 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.getenv('DEVELOPER_ENV') == '1'
+
 # Now you can use these variables
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_REGION = os.getenv('AWS_REGION')
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
 AWS_SNS_S3_OBJECT_PUT_NOTIFS = os.getenv('AWS_SNS_S3_OBJECT_PUT_NOTIFS')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
-DB_USER = os.getenv('DB_USER')
-DB_NAME = os.getenv('DB_NAME')
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
-PUBLIC_URL = os.getenv('REACT_APP_NGROK_PUBLIC_URL')
 
-logger.info(f"NGROK_PUBLIC_URL: {PUBLIC_URL}")
-logger.info(f"DEVELOPER_ENV: {os.getenv('DEVELOPER_ENV')}")
+if DEBUG: # DEBUG ENV
+    DB_PASSWORD = os.getenv('DB_PASSWORD')
+    DB_USER = os.getenv('DB_USER')
+    DB_NAME = os.getenv('DB_NAME')
+    SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+    DB_HOST = os.getenv('DB_HOST')
+    DB_PORT = os.getenv('DB_PORT')
 
-# Check if it's production or development environment
-if os.getenv('DEVELOPER_ENV') == '1':  # Production
+    # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+    PUBLIC_URL = os.getenv('REACT_APP_NGROK_PUBLIC_URL')
+    PUBLIC_URL = PUBLIC_URL.split("//")[1]
+    
     BACKEND_URL = os.getenv('PROD_BACKEND_URL')
     FRONTEND_URL = os.getenv('PROD_FRONTEND_URL')
-else:  # Development
-    BACKEND_URL = os.getenv('DEV_BACKEND_URL')
-    FRONTEND_URL = os.getenv('DEV_FRONTEND_URL')
+else: # PRODUCTION ENV
+    DB_PASSWORD = os.getenv('RDS_PASSWORD')
+    DB_USER = os.getenv('RDS_USER')
+    DB_NAME = os.getenv('RDS_DB_NAME')
+    SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+    DB_HOST = os.getenv('RDS_HOST')
+    DB_PORT = os.getenv('RDS_PORT')
+
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+    PUBLIC_URL = os.getenv('BEANSTALK_PUBLIC_URL')
+    
+    BACKEND_URL = os.getenv('PROD_BACKEND_URL')
+    FRONTEND_URL = os.getenv('PROD_FRONTEND_URL')
+
+
+logger.info(f"NGROK_PUBLIC_URL: {PUBLIC_URL}")
+logger.info(f"DEVELOPER_ENV: {DEBUG}")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEVELOPER_ENV') == '1'
+
 
 
 
@@ -71,16 +93,17 @@ INSTALLED_APPS = [
     'photo_identifier',
     'rest_framework',
     'rest_framework_simplejwt',
-    'authentication'
+    'authentication',
+    # 'storages'
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',  # Add JWT Authentication
     ],
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.IsAuthenticated',  # Optional: Define default permission class
-    # ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # Optional: Define default permission class
+    ],
     'DEFAULT_THROTTLE_CLASSES': [
     'rest_framework.throttling.UserRateThrottle',  # Per user rate limit
     'rest_framework.throttling.AnonRateThrottle',  # Correct name
@@ -105,7 +128,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React dev server
-    PUBLIC_URL,
+    "https://" + PUBLIC_URL,
     "http://backend:8000",
     "http://host.docker.internal:3000",  # Your frontend URL
 
@@ -162,8 +185,8 @@ DATABASES = {
         'NAME': DB_NAME,
         'USER': DB_USER,
         'PASSWORD': DB_PASSWORD,
-        'HOST': 'postgres-primary',
-        'PORT': '5432',
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
     }
 }
 
@@ -210,7 +233,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # NGROK_PUBLIC_URL.split("//")[1]
 
-ALLOWED_HOSTS = [PUBLIC_URL.split("//")[1], 'localhost', '127.0.0.1', "backend", '49de-76-126-145-131.ngrok-free.app']
+ALLOWED_HOSTS = [PUBLIC_URL, 'localhost', '127.0.0.1', "backend", '.elasticbeanstalk.com']
 AUTH_USER_MODEL = 'authentication.CustomUser'
 
 LOGGING = {

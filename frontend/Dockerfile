@@ -14,6 +14,9 @@ RUN npm install -g npm-check-updates
 RUN ncu -u
 RUN npm install react-router-dom
 
+# calender
+RUN npm install @fullcalendar/react @fullcalendar/daygrid @fullcalendar/interaction
+
 RUN npm outdated
 # RUN npm update
 RUN npm dedupe

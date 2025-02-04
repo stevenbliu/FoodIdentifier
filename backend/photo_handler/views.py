@@ -126,6 +126,7 @@ class CreatePhotoView(APIView):
         else:
             raise ValidationError({'error': 'Failed to save photo metadata'})
 
+# You can use the DetailView to retrieve metadata for a photo
 class PhotoDetailView(APIView):
     """Handles retrieving metadata for a photo."""
     
@@ -302,7 +303,7 @@ class SNSSubscribeView(APIView):
 class InjectTestDataView(APIView):
     """Injects test data into the database."""
     
-    def post(self, request):
+    def get(self, request):
         test_data = {"filename": "test_image.jpg", "file_size": 1024}
         logger.info(f"Injecting test data: {test_data}")
 

@@ -31,6 +31,7 @@ export const loginUser  = async (email, password, login) => {
   // Response Logic
   // const { login } = useUser(); // Access login function from context
 
+  console.log('Logging in user:', email, password);
   try {
     const data = await fetchAPI('auth/login/', {
       method: 'POST',
@@ -40,6 +41,7 @@ export const loginUser  = async (email, password, login) => {
 
     // Store user info and tokens
     login(data.user, data.access);  // Pass user data and access token
+    console.log('User logged in successfully:', data.refresh, data.access);
 
     // Optionally, store the refresh token if needed
     localStorage.setItem('refresh_token', data.refresh);

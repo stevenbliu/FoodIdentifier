@@ -1,8 +1,8 @@
 import React from 'react';
 import { fetchAPI } from '../utils/fetchUtils'; // Import the fetchAPI function
 
-const REACT_APP_NGROK_PUBLIC_URL = process.env.REACT_APP_NGROK_PUBLIC_URL;
-const PHOTO_URL = `${REACT_APP_NGROK_PUBLIC_URL}/photos`;
+// const REACT_APP_NGROK_PUBLIC_URL = process.env.REACT_APP_NGROK_PUBLIC_URL;
+const PHOTO_URL = `photos`;
 
 function SubscribeNotifications() {
   const subscribeToNotifications = async () => {
@@ -13,10 +13,10 @@ function SubscribeNotifications() {
       }, true); // 'true' indicates that authentication is required
 
       console.log('Subscription successful:', response);
-      alert('You have successfully subscribed to notifications!');
+      // alert('You have successfully subscribed to notifications!');
     } catch (error) {
       console.error('Error subscribing to notifications:', error);
-      alert('Failed to subscribe. Please try again.');
+      // alert('Failed to subscribe. Please try again.');
     }
   };
 

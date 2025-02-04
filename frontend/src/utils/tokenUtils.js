@@ -11,7 +11,7 @@ export const refreshAccessToken = async () => {
     }
   
     try {
-        const response = await fetchAPI(`token/refresh/`, {
+        const response = await fetchAPI(`auth/token/refresh/`, {
             method: 'POST',
             body: JSON.stringify({ refresh: refreshToken }),
           }, false); // No authentication needed for this endpoint

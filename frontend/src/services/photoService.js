@@ -1,4 +1,7 @@
-const PHOTO_URL = `${process.env.REACT_APP_NGROK_PUBLIC_URL}/photos`;
+import fetchUtils from './utils/fetchUtils'
+
+
+const PHOTO_URL = `/photos`;
 
 export const photoService = {
   uploadImage: async (file) => {
