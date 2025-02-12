@@ -1,11 +1,11 @@
-import fetchUtils from './utils/fetchUtils'
+import { fetchAPI} from './fetchUtils';
 
 
 const PHOTO_URL = `/photos`;
 
 export const photoService = {
   uploadImage: async (file) => {
-    const createResponse = await fetch(`${PHOTO_URL}/create/`, {
+    const createResponse = await fetchAPI(`${PHOTO_URL}/create/`, {
       method: 'POST',
       body: JSON.stringify({ filename: file.name, file_size: file.size }),
       headers: { 'Content-Type': 'application/json' },
@@ -14,7 +14,7 @@ export const photoService = {
 
     if (!url) throw new Error('Invalid response from server.');
 
-    const uploadResponse = await fetch(url, {
+    const uploadResponse = await fetchAPI(url, {
       method: 'PUT',
       body: file,
       headers: { 'Content-Type': file.type },

@@ -2,11 +2,12 @@
 echo "Starting ngrok server: ngrok http $BACKEND_PORT"
 
 ngrok http http://backend:$BACKEND_PORT &
+# ngrok http host.docker.internal:$BACKEND_PORT &
 
 # Wait for ngrok to be ready and provide a valid public URL
 echo "Waiting for ngrok to be ready..."
 
-NGROK_PUBLIC_URL=""
+NGROK_PUBLIC_URL=$REACT_APP_NGROK_PUBLIC_URL
 
 while true; do
     # Fetch the ngrok public URL from the API

@@ -55,7 +55,7 @@ logger = logging.getLogger(__name__)
 
 TOPIC_ARN = settings.AWS_SNS_S3_OBJECT_PUT_NOTIFS
 BASE_URL = settings.ALLOWED_HOSTS[0]
-NOTIFICATION_ENDPOINT = f"https://{BASE_URL}/photos/notifications/"
+NOTIFICATION_ENDPOINT = f"https://{BASE_URL}/api/photos/notifications/"
 
 def log_error(message, details, logger):
     logger.error(message)
@@ -65,7 +65,7 @@ def send_sns_response(message, status_code, details=None):
     return Response({"message": message, "details": details}, status=status_code)
 
 def handle_error(message, status_code, logger, details=None):
-    logger.error(message)
+    logger.error({"error": message, "details": details})
     return Response({"error": message, "details": details}, status=status_code)
 
 class CreatePhotoView(APIView):
@@ -73,17 +73,22 @@ class CreatePhotoView(APIView):
         data = request.data
         filename = data.get('filename')
         file_size = data.get('file_size')
+        file_type = data.get('file_type')
+        logger.info(f"Received request to create photo with filename: {filename} and file size: {file_size} and file_type: {file_type}")
 
         if not filename or not file_size:
             return handle_error('Missing filename or file_size', status.HTTP_400_BAD_REQUEST, logger)
 
         try:
             if self.check_sns_subscription(TOPIC_ARN, NOTIFICATION_ENDPOINT):
-                photo = self.save_photo_metadata(filename, file_size)
-                presigned_url = self.generate_presigned_url(photo)
-                return Response({'id': photo.id, 'url': presigned_url}, status=status.HTTP_201_CREATED)
+                logger.info('SNS subscription found. Generating presigned URL')
+                photo = self.save_photo_metadata(filename, file_size, file_type)
+                logger.info(f"Photo metadata saved: {photo}")
+                s3_presigned_url = self.generate_presigned_url(photo)
+                logger.info(f"Presigned URL generated: {s3_presigned_url}")
+                return Response({'id': photo.id, 's3_presigned_url': s3_presigned_url}, status=status.HTTP_201_CREATED)
             else:
-                return handle_error('SNS subscription not found', status.HTTP_500_INTERNAL_SERVER_ERROR, logger)
+                return handle_error('SNS subscription not found. Please subscribe to Notifications', status.HTTP_500_INTERNAL_SERVER_ERROR, logger)
         except Exception as e:
             return handle_error(str(e), status.HTTP_500_INTERNAL_SERVER_ERROR, logger)
 
@@ -93,35 +98,41 @@ class CreatePhotoView(APIView):
         
         # List subscriptions for the SNS topic
         try:
+            logger.info('Checking SNS subscription: Getting list of subscriptions')
             response = sns_client.list_subscriptions_by_topic(TopicArn=topic_arn)
             
             # Check if the endpoint is in the subscriptions
             for subscription in response['Subscriptions']:
                 if subscription['Endpoint'] == endpoint and subscription['Protocol'] == 'https':
+                    logger.info('Endpoint is already subscribed to the SNS topic')
                     return True  # Endpoint is subscribed
+            logger.info('Endpoint is not subscribed to the SNS topic')
             return False  # Endpoint is not subscribed
 
         except ClientError as e:
-            print(f"Error checking SNS subscription: {e}")
+            logger.error(f"Error checking SNS subscription: {e}")
             return False
         
     def generate_presigned_url(self, photo: Photo):
+        logger.info(f"Generating presigned url for file with details: {photo.id, photo.file_type, photo.file_size}")
         s3_client = boto3.client('s3', region_name=settings.AWS_REGION)
         return s3_client.generate_presigned_url(
             'put_object',
             Params={
                 'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
                 'Key': f"{photo.filename}_{photo.id}",
-                'ContentType': 'image/png',
+                'ContentType': photo.file_type,
                 'ContentLength': photo.file_size,
         
             },
             ExpiresIn=3600,
         )
 
-    def save_photo_metadata(self, filename, file_size):
-        serializer = PhotoSerializer(data={'filename': filename, 'file_size': file_size})
+    def save_photo_metadata(self, filename, file_size, file_type):
+        logger.info(f"Saving photo metadata for file: {filename, file_size, file_type}")
+        serializer = PhotoSerializer(data={'filename': filename, 'file_size': file_size, 'file_type': file_type})
         if serializer.is_valid():
+            logger.info(f"Photo metadata validated: {serializer.validated_data}")
             return serializer.save()
         else:
             raise ValidationError({'error': 'Failed to save photo metadata'})

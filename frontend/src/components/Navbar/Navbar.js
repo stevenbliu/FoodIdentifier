@@ -11,6 +11,7 @@ function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-container">
+        
         <div className="logo">
           <Link to="/" className="logo-link">Food Identifier</Link>
         </div>

@@ -29,8 +29,8 @@ services:
     # depends_on:
       # - backend  # Ensure the backend is up before starting ngrok
     healthcheck:
-      # test: ["CMD", "curl", "-f", "http://localhost:4040"]
-      test: ["CMD", "curl", "-f", "${REACT_APP_API_URL}"]
+      test: ["CMD", "curl", "-f", "http://localhost:4040"]
+      # test: ["CMD", "curl", "-f", "${REACT_APP_API_URL}"]
       interval: 30s
       retries: 3
       start_period: 10s
@@ -38,8 +38,8 @@ services:
 
 
   backend:
-    # build: ./backend # local 
-    image: sdevinl/foodidentifier-backend:latest
+    build: ./backend # local 
+    # image: sdevinl/foodidentifier-backend:latest
     volumes:
       - ./backend:/app
       - ./backend/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro  # Mount the custom script
@@ -47,10 +47,12 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      # - postgres-primary
-      - ngrok
+      postgres-primary:
+          condition: service_healthy  # Waits for the primary to be healthy before starting
+      ngrok:
+          condition: service_healthy  # Waits for ngrok to be healthy before starting
     environment:
-      - DATABASE_URL=postgres://user:password@postgres-primary:5432/dbname
+      - DATABASE_URL=${DB_URL}  # Use the database URL from the .env file
       - REACT_APP_API_URL=http://backend:8000  # Use internal backend service
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
@@ -121,32 +123,32 @@ services:
   #     start_period: 10s
   #     timeout: 5s
 
-  # postgres-primary:
-  #   image: postgres:13
-  #   environment:
-  #     POSTGRES_USER: ${DB_USER} 
-  #     POSTGRES_PASSWORD: ${DB_PASSWORD}
-  #     POSTGRES_DB: ${DB_NAME}
-  #     # PGDATA: /var/lib/postgresql/data  # New directory to store data
-  #     # POSTGRES_INITDB_WALDIR: /var/lib/postgresql/data/pg_wal
-  #   volumes:
-  #     - postgres_data_primary:/var/lib/postgresql/data
-  #     - ./postgres/init_pg_hba.sh:/docker-entrypoint-initdb.d/init_pg_hba.sh
-  #     - ./postgres/init_primary.sql:/docker-entrypoint-initdb.d/init_primary.sql
-  #   ports:
-  #     - "5432:5432"
-  #   expose:
-  #     - "5432"  # Exposed for replication
-  #   # user: postgres
-  #   # command: ["bash", "-c", "rm -rf /var/lib/postgresql/data/* && initdb -D /var/lib/postgresql/data && postgres"]
-  #   healthcheck:
-  #     test: ["CMD", "pg_isready", "-U", "user", "-d", "dbname"]
-  #     interval: 10s
-  #     retries: 5
-  #     timeout: 5s
-  #   mem_limit: 4g
-  #   cpu_quota: 100000
-  #   cpu_period: 100000
+  postgres-primary:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: ${DB_USER} 
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      # PGDATA: /var/lib/postgresql/data  # New directory to store data
+      # POSTGRES_INITDB_WALDIR: /var/lib/postgresql/data/pg_wal
+    volumes:
+      - postgres_data_primary:/var/lib/postgresql/data
+      - ./postgres/init_pg_hba.sh:/docker-entrypoint-initdb.d/init_pg_hba.sh
+      - ./postgres/init_primary.sql:/docker-entrypoint-initdb.d/init_primary.sql
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"  # Exposed for replication
+    # user: postgres
+    # command: ["bash", "-c", "rm -rf /var/lib/postgresql/data/* && initdb -D /var/lib/postgresql/data && postgres"]
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user", "-d", "dbname"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+    mem_limit: 4g
+    cpu_quota: 100000
+    cpu_period: 100000
 
   # postgres-replica:
   #   image: postgres:13

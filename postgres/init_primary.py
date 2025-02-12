@@ -16,7 +16,7 @@ db_user = os.getenv('DB_USER')
 db_password = os.getenv('DB_PASSWORD')
 db_name = os.getenv('DB_NAME')
 
-# Connect to your PostgreSQL database
+# Connect to your PostgreSQL database with superuser privileges
 connection = psycopg2.connect(
     dbname='postgres',  # Default database to connect for operations
     user='postgres',    # Or your DB superuser
