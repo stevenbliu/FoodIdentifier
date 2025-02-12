@@ -11,6 +11,7 @@ class Photo(models.Model):
     upload_time = models.DateTimeField(default=timezone.now)  # Time when the photo metadata is saved
     upload_status = models.CharField(max_length=20, default='pending')  # Status of the upload
     food_name = models.CharField(max_length=255, blank=True, null=True, default=None)  # Information about food (optional)
+    # file = models.FileField(upload_to='photos/')  # Actual photo file, stored in the 'photos' directory
 
     def s3_url(self):
         # Generate the S3 URL dynamically
@@ -18,6 +19,9 @@ class Photo(models.Model):
 
     def save(self, *args, **kwargs):
         # Any additional logic to execute before saving the instance
+        # if self.file:
+        #     self.file_size = self.file.size  # Set file size before saving
+        #     self.filename = self.file.name  # Set filename before saving
         super().save(*args, **kwargs)
 
     def __str__(self):

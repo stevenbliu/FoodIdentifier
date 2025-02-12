@@ -82,7 +82,7 @@ class CreatePhotoView(APIView):
         try:
             if self.check_sns_subscription(TOPIC_ARN, NOTIFICATION_ENDPOINT):
                 logger.info('SNS subscription found. Generating presigned URL')
-                photo = self.save_photo_metadata(filename, file_size, file_type)
+                photo = self.save_photo(filename, file_size, file_type)
                 logger.info(f"Photo metadata saved: {photo}")
                 s3_presigned_url = self.generate_presigned_url(photo)
                 logger.info(f"Presigned URL generated: {s3_presigned_url}")
@@ -128,14 +128,16 @@ class CreatePhotoView(APIView):
             ExpiresIn=3600,
         )
 
-    def save_photo_metadata(self, filename, file_size, file_type):
+    def save_photo(self, filename, file_size, file_type):
         logger.info(f"Saving photo metadata for file: {filename, file_size, file_type}")
         serializer = PhotoSerializer(data={'filename': filename, 'file_size': file_size, 'file_type': file_type})
+        
+        # check if file size and types are within acceptable limits
         if serializer.is_valid():
             logger.info(f"Photo metadata validated: {serializer.validated_data}")
             return serializer.save()
         else:
-            raise ValidationError({'error': 'Failed to save photo metadata'})
+            raise ValidationError({'error': 'Failed to save photo metadata with errors', 'details': serializer.errors})
 
 # You can use the DetailView to retrieve metadata for a photo
 class PhotoDetailView(APIView):
