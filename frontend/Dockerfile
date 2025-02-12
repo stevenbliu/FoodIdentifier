@@ -14,6 +14,10 @@ RUN npm install -g npm-check-updates
 RUN ncu -u
 RUN npm install react-router-dom
 
+# tailwind CSS
+RUN npm install -D tailwindcss postcss autoprefixer
+RUN npx tailwindcss init
+
 # calender
 RUN npm install @fullcalendar/react @fullcalendar/daygrid @fullcalendar/interaction
 
