@@ -26,7 +26,7 @@ RUN npm install bootstrap
 # Install required npm packages for the frontend
 RUN npm install react-router-dom @fullcalendar/react @fullcalendar/daygrid @fullcalendar/interaction 
 
-
+RUN npm i @chakra-ui/react@2 @emotion/react @emotion/styled framer-motion @chakra-ui/icons   
 
 
 # Ensure tailwindcss is installed and use npx to initialize the config

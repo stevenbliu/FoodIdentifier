@@ -1,53 +1,57 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
-import './Navbar.css';
+import { Box, Button, Flex, HStack, Menu, MenuButton, MenuList, MenuItem, useDisclosure, Text } from '@chakra-ui/react';
+import { ChevronDownIcon } from '@chakra-ui/icons';  // Import Chakra's icon for the dropdown
 import LoginModal from '../Authentication/LoginModal'; // Import the modal component
 
 function Navbar() {
   const { user, logout } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure(); // Chakra's hooks for managing modal state
+
+  console.log("Navbar rendered!");
 
   return (
-    <nav className="navbar">
-      <div className="navbar-container">
-        
-        <div className="logo">
-          <Link to="/" className="logo-link">Food Identifier</Link>
-        </div>
+    <Box as="nav" bg="teal.500" color="white" px={4}>
+      <Flex align="center" justify="space-between" maxW="1200px" mx="auto" py={2}>
+        {/* Logo */}
+        <Box>
+          <Link to="/" style={{ textDecoration: 'none' }}>
+            <Text fontSize="2xl" fontWeight="bold">Food Identifier</Text>
+          </Link>
+        </Box>
 
-        <ul className="navbar-menu">
-          <li className="navbar-item">
-            <Link to="/" className="navbar-link">Home</Link>
-          </li>
-          <li className="navbar-item">
-            <Link to="/upload" className="navbar-link">Upload</Link>
-          </li>
+        {/* Navigation Menu */}
+        <HStack spacing={6} display="flex">
+          <Link to="/" className="navbar-link">Home</Link>
+          <Link to="/upload" className="navbar-link">Upload</Link>
+          <Link to="/upload" className="navbar-link">Dashboard</Link>
+          <Link to="/calendar" className="navbar-link">Calendar</Link>
 
-          <li className="navbar-item dropdown">
-            <span className="navbar-link">Profile</span>
-            <ul className="dropdown-menu">
+          {/* Profile Dropdown */}
+          <Menu>
+            <MenuButton as={Button} rightIcon={<ChevronDownIcon />} variant="link" color="white">
+              Profile
+            </MenuButton>
+            <MenuList>
               {user ? (
                 <>
-                  <li><Link to="/profile" className="dropdown-link">My Profile</Link></li>
-                  <li><Link to="/settings" className="dropdown-link">Settings</Link></li>
-                  <li><span onClick={logout} className="dropdown-link">Logout</span></li>
+                  <MenuItem as={Link} to="/profile">My Profile</MenuItem>
+                  <MenuItem as={Link} to="/settings">Settings</MenuItem>
+                  <MenuItem onClick={logout}>Logout</MenuItem>
                 </>
               ) : (
-                <li>
-                  <span onClick={() => setIsModalOpen(true)} className="dropdown-link">
-                    Register/Login
-                  </span>
-                </li>
+                <MenuItem onClick={() => setIsModalOpen(true)}>Register/Login</MenuItem>
               )}
-            </ul>
-          </li>
-        </ul>
-      </div>
+            </MenuList>
+          </Menu>
+        </HStack>
+      </Flex>
 
       {/* Login/Register Modal */}
       {isModalOpen && <LoginModal onClose={() => setIsModalOpen(false)} />}
-    </nav>
+    </Box>
   );
 }
 

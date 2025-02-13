@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { Box, Button, Heading, Text, VStack, Image, Container, Grid } from '@chakra-ui/react';
 import UploadImage from '../FileUpload';
 import TestButtons from '../TestButtons';
 import FetchPhoto from '../FetchPhoto';
 import { useUser } from '../../context/UserContext';
 import SubscribeNotifications from '../SubscribeNotification';
+import DashboardCard from './DashboardCard'; // New component for sections
 
 function Dashboard() {
   const { user, logout } = useUser();
@@ -11,69 +13,60 @@ function Dashboard() {
   const [foodInfo, setFoodInfo] = useState(null);
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-500 via-teal-500 to-cyan-500">
-      <div className="max-w-7xl mx-auto p-8">
+    <Box minH="100vh" bgGradient="linear(to-r, blue.500, teal.500, cyan.500)">
+      <Container maxW="7xl" py={10}>
+        
         {/* Header Section */}
-        <div className="flex justify-between items-center text-black mb-12">
-          <div>
-            <h2 className="text-4xl font-extrabold">Hello, {user.username}</h2>
-            <p className="mt-2 text-lg">Welcome to your dashboard</p>
-          </div>
-          <button
-            onClick={logout}
-            className="px-6 py-3 text-lg font-semibold bg-white text-gray-800 rounded-lg hover:bg-gray-100 transition duration-300"
-          >
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={12} color="white">
+          <VStack align="start">
+            <Heading size="xl" textDecoration="underline">
+              Hello, {user.username}
+            </Heading>
+            <Text fontSize="lg">Welcome to your dashboard</Text>
+          </VStack>
+          <Button colorScheme="gray" size="lg" onClick={logout}>
             Logout
-          </button>
-        </div>
+          </Button>
+        </Box>
 
         {/* Main Dashboard Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <Grid templateColumns={{ base: "1fr", sm: "1fr 1fr", lg: "1fr 1fr 1fr" }} gap={8}>
           
-          {/* Image Upload Section */}
-          <div className="bg-white bg-opacity-30 p-6 rounded-2xl shadow-lg backdrop-blur-lg">
-            <h3 className="text-2xl font-bold text-black mb-4">Upload Your Image</h3>
+          <DashboardCard title="Upload Your Image">
             <UploadImage setImageUrl={setImageUrl} setFoodInfo={setFoodInfo} />
-          </div>
+          </DashboardCard>
 
-          {/* Notifications Subscription Section */}
-          <div className="bg-white bg-opacity-30 p-6 rounded-2xl shadow-lg backdrop-blur-lg">
-            <h3 className="text-2xl font-bold text-black mb-4">Subscribe to Notifications</h3>
+          <DashboardCard title="Subscribe to Notifications">
             <SubscribeNotifications />
-          </div>
+          </DashboardCard>
 
-          {/* Test Buttons Section */}
-          <div className="bg-white bg-opacity-30 p-6 rounded-2xl shadow-lg backdrop-blur-lg">
-            <h3 className="text-2xl font-bold text-black mb-4">Test Functions</h3>
+          <DashboardCard title="Test Functions">
             <TestButtons />
-          </div>
+          </DashboardCard>
 
-          {/* Fetch Food Info Section */}
-          <div className="bg-white bg-opacity-30 p-6 rounded-2xl shadow-lg backdrop-blur-lg">
-            <h3 className="text-2xl font-bold text-black mb-4">Fetch Food Info</h3>
+          <DashboardCard title="Fetch Food Info">
             <FetchPhoto setFoodInfo={setFoodInfo} />
-          </div>
+          </DashboardCard>
 
-        </div>
+        </Grid>
 
-        {/* Display the uploaded image */}
+        {/* Uploaded Image Display */}
         {imageUrl && (
-          <div className="mt-8 bg-white bg-opacity-20 p-8 rounded-xl shadow-lg backdrop-blur-lg">
-            <h4 className="text-2xl font-semibold mb-4">Uploaded Image</h4>
-            <img src={imageUrl} alt="Uploaded preview" className="max-w-full h-auto rounded-xl shadow-md" />
-          </div>
+          <DashboardCard title="Uploaded Image">
+            <Image src={imageUrl} alt="Uploaded preview" borderRadius="lg" boxShadow="md" />
+          </DashboardCard>
         )}
 
-        {/* Display Food Information */}
+        {/* Food Information Display */}
         {foodInfo && (
-          <div className="mt-8 bg-white bg-opacity-20 p-8 rounded-xl shadow-lg backdrop-blur-lg">
-            <h4 className="text-2xl font-semibold mb-4">Food Information</h4>
-            <p><strong>Name:</strong> {foodInfo.name}</p>
-            <p><strong>Description:</strong> {foodInfo.description}</p>
-          </div>
+          <DashboardCard title="Food Information">
+            <Text><strong>Name:</strong> {foodInfo.name}</Text>
+            <Text><strong>Description:</strong> {foodInfo.description}</Text>
+          </DashboardCard>
         )}
-      </div>
-    </div>
+
+      </Container>
+    </Box>
   );
 }
 

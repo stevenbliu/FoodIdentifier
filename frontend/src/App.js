@@ -1,94 +1,73 @@
 import React, { useEffect } from 'react';
-import './App.css';
-import './components/Authentication/AuthContainer.css'; // AuthContainer styles
+import { ChakraProvider, Box, Container, Heading, Flex } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
-import { useUser } from './context/UserContext'; // Import the useUser hook
+import { useUser } from './context/UserContext';
 import Dashboard from './components/Dashboard/Dashboard';
-import AuthContainer from './components/Authentication/AuthContainer'; // Import AuthContainer
+import AuthContainer from './components/Authentication/AuthContainer';
 import Login from './pages/Login';
 import Calendar from './pages/Calendar';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 
-// Import layouts
-import DashboardLayout from './layouts/DashboardLayout';
-import AuthLayout from './layouts/AuthLayout';
-
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './index.css';
 
 const App = () => {
-  const { user, login } = useUser(); // Extract user and login from context
+  const { user, login } = useUser();
 
-  // Skip login in development mode if environment variable is set
   let skipLogin = process.env.REACT_APP_SKIP_LOGIN === 'true';
-  // Simulate login for dev mode
-  skipLogin = true; // Set to false for real authentication flow
+  skipLogin = true;
 
-  // Simulate a user login in development mode
   useEffect(() => {
     if (skipLogin && !user) {
       const devUser = { username: 'devUser', email: 'dev@user.com', id: 1 };
       const devToken = 'dev-token-1234';
-      login(devUser, devToken); // Log in with fake user data
+      login(devUser, devToken);
     }
   }, [skipLogin, user, login]);
 
-  return (
-    <Router>
-      <div className="App bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 min-h-screen">
-        {/* Navbar */}
-        <Navbar />
-        
-        <div className="container mx-auto p-8">
-          <header className="text-center mb-10">
-            <h1 className="text-4xl font-extrabold text-white">Food Identifier</h1>
-          </header>
+  return ( 
+    <ChakraProvider> 
+      <Router>
+        <Box height="20vh" bgGradient="linear(to-r, indigo.500, purple.500, pink.500)">
+          
+          {/* Debugging Tailwind */}
+          <Box backgroundImage="url(https://4.img-dpreview.com/files/p/E~TS590x0~articles/3925134721/0266554465.jpeg)"
+          backgroundSize="cover" backgroundPosition="center" height='100%'>
+            If this text has a blue background, Tailwind is working!
+          </Box>
 
-          {/* Routing */}
-          <Routes>
-            {/* Home Route: Redirect to dashboard if logged in */}
-            <Route
-              path="/"
-              element={skipLogin || user ? (
-                <Navigate to="/dashboard" />
-              ) : (
-                <AuthContainer />
-              )}
-            />
+          {/* Navbar */}
+          <Navbar />
 
-            {/* Authentication Routes */}
-            <Route path="/login" element={<AuthLayout><AuthContainer /></AuthLayout>} />
+          {/* Main Content */}
+          <Container maxW="7xl" py={0} bg="green.100">
+            <Flex justify="center" align="center" direction="column" textAlign="center" mb={10}>
+              <Heading as="h1" size="xl" color="purple.500">
+                Food Identifier Main Content
+              </Heading>
+            </Flex>
 
-            {/* Main Dashboard Routes */}
-            <Route path="/dashboard" element={user ? (
-              <DashboardLayout><Dashboard /></DashboardLayout>
-            ) : (
-              <Navigate to="/login" />
-            )} />
-            <Route path="/calendar" element={user ? (
-              <DashboardLayout><Calendar /></DashboardLayout>
-            ) : (
-              <Navigate to="/login" />
-            )} />
-            <Route path="/profile" element={user ? (
-              <DashboardLayout><Profile /></DashboardLayout>
-            ) : (
-              <Navigate to="/login" />
-            )} />
-            <Route path="/settings" element={user ? (
-              <DashboardLayout><Settings /></DashboardLayout>
-            ) : (
-              <Navigate to="/login" />
-            )} />
-          </Routes>
-        </div>
-        
-        {/* Footer */}
-        <Footer />
-      </div>
-    </Router>
+            {/* Routing */}
+            <Routes>
+              <Route
+                path="/"
+                element={skipLogin || user ? <Navigate to="/dashboard" /> : <AuthContainer />}
+              />
+              <Route path="/login" element={<AuthContainer />} />
+              <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} />
+              <Route path="/calendar" element={user ? <Calendar /> : <Navigate to="/login" />} />
+              <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
+              <Route path="/settings" element={user ? <Settings /> : <Navigate to="/login" />} />
+            </Routes>
+          </Container>
+          
+          {/* Footer */}
+          <Footer />
+        </Box>
+      </Router>
+    </ChakraProvider>
   );
 };
 

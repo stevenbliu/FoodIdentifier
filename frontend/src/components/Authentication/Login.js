@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useUser } from '../../context/UserContext'; // Import user context
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../utils/authUtils'; // Import loginUser function
-// import './Login.css'; // Import the updated CSS
+import { Box, Button, FormControl, FormLabel, Input, Text, Alert, AlertIcon } from '@chakra-ui/react'; // Chakra UI components
 
 const Login = () => {
   const { login } = useUser(); // Access login function from context
@@ -15,7 +15,7 @@ const Login = () => {
     event.preventDefault(); // Prevent default form submission
 
     if (!email || !password) {
-      setError("Both fields are required.");
+      setError('Both fields are required.');
       return;
     }
 
@@ -36,33 +36,60 @@ const Login = () => {
   };
 
   return (
-      <div className="login-form">
-        <h2>Login</h2>
-        <form onSubmit={handleLogin}>
-          <div className="input-group">
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="input-field"
-            />
-          </div>
-          <div className="input-group">
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="input-field"
-            />
-          </div>
-          <button type="submit" className="submit-button">Login</button>
-        </form>
-        {error && <p className="error-message">{error}</p>} {/* Display error message */}
-      </div>
+    <Box
+      maxW="sm"
+      mx="auto"
+      p={6}
+      bg="white"
+      borderRadius="lg"
+      boxShadow="lg"
+      mt="20"
+    >
+      <Text fontSize="2xl" fontWeight="bold" mb={4} textAlign="center">
+        Login
+      </Text>
+
+      {/* Display error message if any */}
+      {error && (
+        <Alert status="error" mb={4}>
+          <AlertIcon />
+          {error}
+        </Alert>
+      )}
+
+      <form onSubmit={handleLogin}>
+        <FormControl id="email" mb={4}>
+          <FormLabel>Email</FormLabel>
+          <Input
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </FormControl>
+
+        <FormControl id="password" mb={6}>
+          <FormLabel>Password</FormLabel>
+          <Input
+            type="password"
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </FormControl>
+
+        <Button
+          type="submit"
+          colorScheme="teal"
+          width="full"
+          size="lg"
+        >
+          Login
+        </Button>
+      </form>
+    </Box>
   );
 };
 

@@ -43,7 +43,7 @@ services:
     volumes:
       - ./backend:/app
       - ./backend/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro  # Mount the custom script
-
+      - ./.env:/app/.env:rw  # Add the `:cached` flag for better performance on macOS and Windows
     ports:
       - "8000:8000"
     depends_on:
@@ -92,8 +92,8 @@ services:
       - /app/node_modules  # Optional: This ensures node_modules are not overridden by your local system
     # command: bash -c "./ngrok_url_fetcher.sh && npm start"
     # command: bash -c "npm run build && npm start"
-    # command : bash -c "npm start"
-    command: bash -c "tail -f /dev/null"
+    command : bash -c "npm start"
+    # command: tail -f /dev/null
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]  # Adjust if you have a health endpoint
       interval: 30s
