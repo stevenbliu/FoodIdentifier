@@ -1,6 +1,8 @@
+@import "tailwindcss";
+
 /* Global Styles */
 :root {
-  --primary-color: gray;
+  --primary-color: rgba(41, 139, 163, 0.76);
   --secondary-color: darkblue;
   --text-color: #333;
   --background-color: #f4f4f4;

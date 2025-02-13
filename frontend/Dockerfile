@@ -1,28 +1,36 @@
-FROM node:16
+# FROM node:16
+FROM node:20
 
 # Set the working directory inside the container to /app (which will be mapped to ./frontend on your host)
 WORKDIR /app
 
+# Copy the current directory contents into the container at /app
 COPY . .
 
 # Install necessary dependencies and utilities
-RUN apt-get update
-RUN apt-get install -y jq
+RUN apt-get update && apt-get install -y jq
 
 # Install npm dependencies inside /app (which corresponds to ./frontend on your host)
 RUN npm install -g npm-check-updates
+
+# Update dependencies using npm-check-updates
 RUN ncu -u
-RUN npm install react-router-dom
 
-# tailwind CSS
-RUN npm install -D tailwindcss postcss autoprefixer
-RUN npx tailwindcss init
+# Install Tailwind CSS dependencies
+# RUN npm install -D tailwindcss postcss autoprefixer
+# @tailwindcss/vite
 
-# calender
-RUN npm install @fullcalendar/react @fullcalendar/daygrid @fullcalendar/interaction
+# Install bootstrap
+RUN npm install bootstrap
 
-RUN npm outdated
-# RUN npm update
-RUN npm dedupe
-# This generates the build directory
-# RUN npm run build  
+# Install required npm packages for the frontend
+RUN npm install react-router-dom @fullcalendar/react @fullcalendar/daygrid @fullcalendar/interaction 
+
+
+
+
+# Ensure tailwindcss is installed and use npx to initialize the config
+# RUN npx tailwindcss init
+
+# Optional: Run build if needed (you can uncomment this if required)
+# RUN npm run build

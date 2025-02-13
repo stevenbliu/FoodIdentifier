@@ -16,12 +16,14 @@ import Settings from './pages/Settings';
 import DashboardLayout from './layouts/DashboardLayout';
 import AuthLayout from './layouts/AuthLayout';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 const App = () => {
   const { user, login } = useUser(); // Extract user and login from context
 
   // Skip login in development mode if environment variable is set
   let skipLogin = process.env.REACT_APP_SKIP_LOGIN === 'true';
-  // Set skipLogin to true temporarily for development simulation
+  // Simulate login for dev mode
   skipLogin = true; // Set to false for real authentication flow
 
   // Simulate a user login in development mode
@@ -31,23 +33,28 @@ const App = () => {
       const devToken = 'dev-token-1234';
       login(devUser, devToken); // Log in with fake user data
     }
-  }, [skipLogin, user, login]); // Only trigger effect if skipLogin is true
+  }, [skipLogin, user, login]);
 
   return (
     <Router>
-      <div className="App">
+      <div className="App bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 min-h-screen">
+        {/* Navbar */}
         <Navbar />
-        <header className="App-header">
-          <h1>Food Identifier</h1>
+        
+        <div className="container mx-auto p-8">
+          <header className="text-center mb-10">
+            <h1 className="text-4xl font-extrabold text-white">Food Identifier</h1>
+          </header>
 
+          {/* Routing */}
           <Routes>
             {/* Home Route: Redirect to dashboard if logged in */}
             <Route
               path="/"
               element={skipLogin || user ? (
-                <Navigate to="/dashboard" /> // Redirect to dashboard if logged in or skipLogin is true
+                <Navigate to="/dashboard" />
               ) : (
-                <AuthContainer /> // Show authentication form if not logged in
+                <AuthContainer />
               )}
             />
 
@@ -58,25 +65,27 @@ const App = () => {
             <Route path="/dashboard" element={user ? (
               <DashboardLayout><Dashboard /></DashboardLayout>
             ) : (
-              <Navigate to="/login" /> // Redirect to login if not logged in
+              <Navigate to="/login" />
             )} />
             <Route path="/calendar" element={user ? (
               <DashboardLayout><Calendar /></DashboardLayout>
             ) : (
-              <Navigate to="/login" /> // Redirect to login if not logged in
+              <Navigate to="/login" />
             )} />
             <Route path="/profile" element={user ? (
               <DashboardLayout><Profile /></DashboardLayout>
             ) : (
-              <Navigate to="/login" /> // Redirect to login if not logged in
+              <Navigate to="/login" />
             )} />
             <Route path="/settings" element={user ? (
               <DashboardLayout><Settings /></DashboardLayout>
             ) : (
-              <Navigate to="/login" /> // Redirect to login if not logged in
+              <Navigate to="/login" />
             )} />
           </Routes>
-        </header>
+        </div>
+        
+        {/* Footer */}
         <Footer />
       </div>
     </Router>
