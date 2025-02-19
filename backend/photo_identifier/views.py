@@ -5,6 +5,10 @@ from .models import FoodPrediction, FoodLabel
 from photo_handler.models import Photo
 from .ml import run_food_model, run_food_api
 
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.utils.decorators import method_decorator
+
+
 import time
 from rest_framework.exceptions import NotFound
 
@@ -40,6 +44,7 @@ def retry_with_exponential_backoff(func, max_retries=5, base_delay=1, max_delay=
     # If max retries are exceeded, raise an exception
     raise Exception(f"Max retries exceeded for {func.__name__}")
 
+@method_decorator(ensure_csrf_cookie, name='dispatch')  # Ensures CSRF cookie is set
 class PredictFoodView(APIView):
     def get(self, request, photo_id):
         try:

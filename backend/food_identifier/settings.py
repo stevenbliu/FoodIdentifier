@@ -25,46 +25,46 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEVELOPER_ENV') == '1'
+DEBUG = os.getenv("DEVELOPER_ENV") == "1"
 
 # Now you can use these variables
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-AWS_REGION = os.getenv('AWS_REGION')
-AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
-AWS_SNS_S3_OBJECT_PUT_NOTIFS = os.getenv('AWS_SNS_S3_OBJECT_PUT_NOTIFS')
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_REGION = os.getenv("AWS_REGION")
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+AWS_SNS_S3_OBJECT_PUT_NOTIFS = os.getenv("AWS_SNS_S3_OBJECT_PUT_NOTIFS")
 
-if DEBUG: # DEBUG ENV
-    DB_PASSWORD = os.getenv('DB_PASSWORD')
-    DB_USER = os.getenv('DB_USER')
-    DB_NAME = os.getenv('DB_NAME')
-    SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
-    DB_HOST = os.getenv('DB_HOST')
-    DB_PORT = os.getenv('DB_PORT')
+if DEBUG:  # DEBUG ENV
+    DB_PASSWORD = os.getenv("DB_PASSWORD")
+    DB_USER = os.getenv("DB_USER")
+    DB_NAME = os.getenv("DB_NAME")
+    SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+    DB_HOST = os.getenv("DB_HOST")
+    DB_PORT = os.getenv("DB_PORT")
 
     # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-    PUBLIC_URL = os.getenv('REACT_APP_NGROK_PUBLIC_URL')
+    PUBLIC_URL = os.getenv("REACT_APP_NGROK_PUBLIC_URL")
     PUBLIC_URL = PUBLIC_URL.split("//")[1]
-    
-    BACKEND_URL = os.getenv('PROD_BACKEND_URL')
-    FRONTEND_URL = os.getenv('PROD_FRONTEND_URL')
-else: # PRODUCTION ENV
-    DB_PASSWORD = os.getenv('RDS_PASSWORD')
-    DB_USER = os.getenv('RDS_USER')
-    DB_NAME = os.getenv('RDS_DB_NAME')
-    SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
-    DB_HOST = os.getenv('RDS_HOST')
-    DB_PORT = os.getenv('RDS_PORT')
 
-    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    BACKEND_URL = os.getenv("PROD_BACKEND_URL")
+    FRONTEND_URL = os.getenv("PROD_FRONTEND_URL")
+else:  # PRODUCTION ENV
+    DB_PASSWORD = os.getenv("RDS_PASSWORD")
+    DB_USER = os.getenv("RDS_USER")
+    DB_NAME = os.getenv("RDS_DB_NAME")
+    SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+    DB_HOST = os.getenv("RDS_HOST")
+    DB_PORT = os.getenv("RDS_PORT")
 
-    PUBLIC_URL = os.getenv('BEANSTALK_PUBLIC_URL')
-    
-    BACKEND_URL = os.getenv('PROD_BACKEND_URL')
-    FRONTEND_URL = os.getenv('PROD_FRONTEND_URL')
+    STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+    PUBLIC_URL = os.getenv("BEANSTALK_PUBLIC_URL")
+
+    BACKEND_URL = os.getenv("PROD_BACKEND_URL")
+    FRONTEND_URL = os.getenv("PROD_FRONTEND_URL")
 
 
 logger.info(f"NGROK_PUBLIC_URL: {PUBLIC_URL}")
@@ -76,9 +76,6 @@ logger.info(f"DEVELOPER_ENV: {DEBUG}")
 # SECURITY WARNING: keep the secret key used in production secret!
 
 
-
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -88,31 +85,31 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'corsheaders',
-    'photo_handler',
-    'photo_identifier',
-    'rest_framework',
-    'rest_framework_simplejwt',
-    'authentication',
+    "corsheaders",
+    "photo_handler",
+    "photo_identifier",
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "authentication",
     # 'storages'
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Add JWT Authentication
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",  # Add JWT Authentication
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',  # Optional: Define default permission class
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",  # Optional: Define default permission class
     ],
-    'DEFAULT_THROTTLE_CLASSES': [
-    'rest_framework.throttling.UserRateThrottle',  # Per user rate limit
-    'rest_framework.throttling.AnonRateThrottle',  # Correct name
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.UserRateThrottle",  # Per user rate limit
+        "rest_framework.throttling.AnonRateThrottle",  # Correct name
     ],
-    'DEFAULT_THROTTLE_RATES': {
-        'user': '5/hour',  # 5 requests per hour for authenticated users
-        'anon': '2/hour',  # 2 requests per hour for anonymous users
-        'burst': '10/min',      # Throttle rate for burst
-        'sustained': '500/day',  # Throttle rate for sustained
+    "DEFAULT_THROTTLE_RATES": {
+        "user": "5/hour",  # 5 requests per hour for authenticated users
+        "anon": "2/hour",  # 2 requests per hour for anonymous users
+        "burst": "10/min",  # Throttle rate for burst
+        "sustained": "500/day",  # Throttle rate for sustained
     },
 }
 
@@ -124,8 +121,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',  # make sure this is below CorsMiddleware
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",  # make sure this is below CorsMiddleware
+    "django.middleware.csrf.CsrfViewMiddleware",
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -133,25 +131,24 @@ CORS_ALLOWED_ORIGINS = [
     "https://" + PUBLIC_URL,
     "http://backend:8000",
     "http://host.docker.internal:3000",  # Your frontend URL
-
 ]
 
 CORS_ALLOW_METHODS = [
-    'GET',
-    'POST',
-    'PUT',
-    'DELETE',
-    'OPTIONS',
+    "GET",
+    "POST",
+    "PUT",
+    "DELETE",
+    "OPTIONS",
 ]
 
 CORS_ORIGIN_WHITELIST = [
-    'https://example.com',
+    "https://example.com",
 ]
 
 from corsheaders.defaults import default_headers
 
 CORS_ALLOW_HEADERS = default_headers + (
-    'ngrok-skip-browser-warning',  # Allow the ngrok specific header if needed
+    "ngrok-skip-browser-warning",  # Allow the ngrok specific header if needed
 )
 
 ROOT_URLCONF = "food_identifier.urls"
@@ -161,7 +158,7 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
             # os.path.join(BASE_DIR, 'food_photo_service\photo\templates'),
-            os.path.join(BASE_DIR, 'photo_handler'),
+            os.path.join(BASE_DIR, "photo_handler"),
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -182,16 +179,15 @@ WSGI_APPLICATION = "food_identifier.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': DB_NAME,
-        'USER': DB_USER,
-        'PASSWORD': DB_PASSWORD,
-        'HOST': DB_HOST,
-        'PORT': DB_PORT,
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": DB_NAME,
+        "USER": DB_USER,
+        "PASSWORD": DB_PASSWORD,
+        "HOST": DB_HOST,
+        "PORT": DB_PORT,
     }
 }
-
 
 
 # Password validation
@@ -201,9 +197,15 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
 ]
 
 
@@ -235,52 +237,65 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # NGROK_PUBLIC_URL.split("//")[1]
 
-ALLOWED_HOSTS = [PUBLIC_URL, 'localhost', '127.0.0.1', "backend", '.elasticbeanstalk.com']
-AUTH_USER_MODEL = 'authentication.CustomUser'
+ALLOWED_HOSTS = [
+    PUBLIC_URL,
+    "localhost",
+    "127.0.0.1",
+    "backend",
+    ".elasticbeanstalk.com",
+]
+AUTH_USER_MODEL = "authentication.CustomUser"
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
         },
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'django_debug.log',
+        "file": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": "django_debug.log",
         },
     },
-    'loggers': {
-        'django': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO',
-            'propagate': True,
+    "loggers": {
+        "django": {
+            "handlers": ["console", "file"],
+            "level": "INFO",
+            "propagate": True,
         },
-        'django.db.backend': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO',
-            'propagate': True,
+        "django.db.backend": {
+            "handlers": ["console", "file"],
+            "level": "INFO",
+            "propagate": True,
         },
-        'photo_handler': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO',
-            'propagate': True,
+        "photo_handler": {
+            "handlers": ["console", "file"],
+            "level": "INFO",
+            "propagate": True,
         },
     },
 }
 
 
 from datetime import timedelta
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Access token expiry time
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Refresh token expiry time
-    'ROTATE_REFRESH_TOKENS': False,  # Whether to rotate refresh tokens after each use
-    'BLACKLIST_AFTER_ROTATION': False,  # Optionally, blacklist tokens after rotation
-    'ALGORITHM': 'HS256',  # You can change this to another algorithm if needed
-    'SIGNING_KEY': SECRET_KEY,  # Replace with your actual secret key
-    'AUDIENCE': None,
-    'ISSUER': None,
-}
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),  # Access token expiry time
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),  # Refresh token expiry time
+    "ROTATE_REFRESH_TOKENS": True,  # Whether to rotate refresh tokens after each use
+    "BLACKLIST_AFTER_ROTATION": False,  # Optionally, blacklist tokens after rotation
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "ALGORITHM": "HS256",  # You can change this to another algorithm if needed
+    "SIGNING_KEY": SECRET_KEY,  # Replace with your actual secret key
+    "AUDIENCE": None,
+    "ISSUER": None,
+    "AUTH_COOKIE": "access_token",  # Cookie name
+    "AUTH_COOKIE_DOMAIN": None,
+    "AUTH_COOKIE_SECURE": True,  # True in production (only allows HTTPS)
+    "AUTH_COOKIE_HTTP_ONLY": True,  # Prevents JS access
+    "AUTH_COOKIE_PATH": "/",
+    "AUTH_COOKIE_SAMESITE": "Lax",  # Helps prevent CSRF
+}
