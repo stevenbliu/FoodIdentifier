@@ -108,10 +108,12 @@ REST_FRAMEWORK = {
     'rest_framework.throttling.UserRateThrottle',  # Per user rate limit
     'rest_framework.throttling.AnonRateThrottle',  # Correct name
     ],
-    # 'DEFAULT_THROTTLE_RATES': {
-    #     'user': '5/hour',  # 5 requests per hour for authenticated users
-    #     'anon': '2/hour',  # 2 requests per hour for anonymous users
-    # },
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '5/hour',  # 5 requests per hour for authenticated users
+        'anon': '2/hour',  # 2 requests per hour for anonymous users
+        'burst': '10/min',      # Throttle rate for burst
+        'sustained': '500/day',  # Throttle rate for sustained
+    },
 }
 
 MIDDLEWARE = [

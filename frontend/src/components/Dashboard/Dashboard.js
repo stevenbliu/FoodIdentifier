@@ -96,7 +96,7 @@ function Dashboard() {
           >
             {/* Box Wrapper method */}
             {items.map((item, index) => (
-              <Box key={index} borderRadius="lg" boxShadow="md" p={6}>
+              <Box key={index} borderRadius="lg" boxShadow="md" p={6} bg='black'>
                 <DashboardCard
                   title={item.title}
                   onButtonClick={item.onButtonClick}

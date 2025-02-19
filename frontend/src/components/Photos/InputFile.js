@@ -1,17 +1,21 @@
 import React, { useState } from "react";
 import {
-    Box,
-    Button,
-    Heading,
-    Text,
-    VStack,
-    Image,
-    Container,
-    Grid,
-  } from "@chakra-ui/react";
-  
-const FileInput = ({ onFileChange, label = "Upload Photo", predictionMessage }) => {
-    const [imagePreview, setImagePreview] = useState(null);
+  Box,
+  Button,
+  Heading,
+  Text,
+  VStack,
+  Image,
+  Container,
+  Grid,
+} from "@chakra-ui/react";
+
+const FileInput = ({
+  onFileChange,
+  label = "Upload Photo",
+  predictionMessage,
+}) => {
+  const [imagePreview, setImagePreview] = useState(null);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -30,6 +34,7 @@ const FileInput = ({ onFileChange, label = "Upload Photo", predictionMessage }) 
       <label htmlFor="file-upload" className="file-upload-label">
         {label}
       </label>
+      
       <input
         id="file-upload"
         type="file"
@@ -45,9 +50,19 @@ const FileInput = ({ onFileChange, label = "Upload Photo", predictionMessage }) 
       )}
 
       {predictionMessage && (
-        <Text mt={4} color="teal.500" fontWeight="bold">
-          Prediction: {predictionMessage}
-        </Text>
+        <Box
+          mt={4}
+          p={3}
+          bg="teal.100"
+          borderRadius="md"
+          border="1px solid"
+          borderColor="teal.300"
+          textAlign="center"
+        >
+          <Text color="teal.700" fontWeight="bold">
+            🔍 Prediction: {predictionMessage}
+          </Text>
+        </Box>
       )}
     </div>
   );

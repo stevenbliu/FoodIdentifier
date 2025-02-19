@@ -4,6 +4,8 @@ from rest_framework.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
+from food_identifier.throttling import BurstRateThrottle, SustainedRateThrottle
+
 from django.conf import settings
 import boto3
 from .models import Photo
@@ -18,6 +20,7 @@ logging.basicConfig(
     format='%(asctime)s [%(levelname)s] - %(message)s',  # Format with timestamp and log level
     level=logging.INFO  # Set the log level (DEBUG, INFO, ERROR, etc.)
 )
+logger = logging.getLogger(__name__)
 
 import jwt
 from jwt import ExpiredSignatureError, InvalidTokenError
@@ -51,7 +54,6 @@ def check_token_expiration(token):
     except Exception as e:
         return {"status": "invalid", "error": str(e)}
 
-logger = logging.getLogger(__name__)
 
 TOPIC_ARN = settings.AWS_SNS_S3_OBJECT_PUT_NOTIFS
 BASE_URL = settings.ALLOWED_HOSTS[0]

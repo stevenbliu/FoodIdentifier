@@ -18,10 +18,14 @@ from django.db import IntegrityError
 
 import logging
 
+from food_identifier.throttling import BurstRateThrottle, SustainedRateThrottle  # Import from core
+
+
 logger = logging.getLogger(__name__)
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]  # Allow unauthenticated users
+    throttle_classes = [BurstRateThrottle, SustainedRateThrottle]
 
     def post(self, request):
         username = request.data.get('username')
@@ -39,7 +43,8 @@ class RegisterView(APIView):
 
 class LoginView(APIView):
     permission_classes = [AllowAny]  # Allow unauthenticated users
-
+    throttle_classes = [BurstRateThrottle, SustainedRateThrottle]
+    
     def post(self, request):
         
         logger.info(f"Login attempt for user {request.data.get('username')}")
