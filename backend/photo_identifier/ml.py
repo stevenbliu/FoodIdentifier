@@ -75,9 +75,9 @@ def run_food_api(image):
     # model_prediction = Model(model_url).predict_by_filepath(filepath, input_type="text")
 
     # Example for predict by bytes:
-    model_prediction = Model(url=model_url, pat="35fd7f7608734f7eb142ac38d4375e71").predict_by_bytes(image.read(), input_type="image")
+    model_prediction = Model(url=model_url, pat=CLARIFAI_PAT).predict_by_bytes(image.read(), input_type="image")
 
-    # model_prediction = Model(url=model_url, pat="35fd7f7608734f7eb142ac38d4375e71").predict_by_url(
+    # model_prediction = Model(url=model_url, pat="CLARIFAI_PAT).predict_by_url(
     #     image_url, input_type="image"
     # )
 
