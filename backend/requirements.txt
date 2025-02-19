@@ -61,3 +61,4 @@ traitlets==5.14.3
 tzdata==2024.2
 
 pywin32; sys_platform == "win32"
+clarifai

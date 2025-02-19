@@ -10,8 +10,6 @@ function Navbar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure(); // Chakra's hooks for managing modal state
 
-  console.log("Navbar rendered!");
-
   return (
     <Box as="nav" bg="teal.500" color="white" px={4}>
       <Flex align="center" justify="space-between" maxW="1200px" mx="auto" py={2}>

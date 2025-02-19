@@ -3,10 +3,18 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import FoodPrediction, FoodLabel
 from photo_handler.models import Photo
-from .ml import run_food_model
+from .ml import run_food_model, run_food_api
 
 import time
 from rest_framework.exceptions import NotFound
+
+import logging
+# Set up logging
+logging.basicConfig(
+    format='%(asctime)s [%(levelname)s] - %(message)s',  # Format with timestamp and log level
+    level=logging.INFO  # Set the log level (DEBUG, INFO, ERROR, etc.)
+)
+logger = logging.getLogger(__name__)
 
 def retry_with_exponential_backoff(func, max_retries=5, base_delay=1, max_delay=32, *args, **kwargs):
     """
@@ -33,7 +41,7 @@ def retry_with_exponential_backoff(func, max_retries=5, base_delay=1, max_delay=
     raise Exception(f"Max retries exceeded for {func.__name__}")
 
 class PredictFoodView(APIView):
-    def post(self, request, photo_id):
+    def get(self, request, photo_id):
         try:
             # Retry the photo fetch logic in case of intermittent errors
             photo = retry_with_exponential_backoff(Photo.objects.get, photo_id=photo_id)
@@ -64,3 +72,22 @@ class PredictFoodView(APIView):
         except Exception as e:
             # Catch any other exceptions that occur after retry logic is exhausted
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def post(self, request, *args, **kwargs):
+        logger.info(f"Received POST request with data: {request.data}")
+        try:
+            # Handle the case where an image is uploaded directly in the POST request
+            if 'photo' not in request.FILES:
+                return Response({'error': 'No image file provided'}, status=400)
+
+            photo = request.FILES['photo']
+            logger.info(f"Processing image file: {photo.name}")
+            # image_path = default_storage.save(photo.name, photo)
+            # result = retry_with_exponential_backoff(run_food_model, 11)
+            # result = run_food_model(photo) 
+            result = run_food_api(photo)
+            logger.info(f"Prediction result: {result.name}") 
+            return Response({'prediction': result.name})
+        except Exception as e:
+            logger.error(f"Error processing POST request: {e}")
+            return Response({'error': 'Failed to process the request'}, status=500)

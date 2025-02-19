@@ -20,7 +20,17 @@ export const registerUser = async (email, password) => {
 
     return response; // Return the response data
   } catch (error) {
-    console.error('Error during user registration:', error);
+    console.error('Error during user registration12:', error);
+
+    console.error(error)
+    console.error(error.message)
+    console.error(error.error)
+    console.error(error.data)  
+
+    // const errorData = await JSON.parse(error);  // Parse the error message as JSON if it’s not already
+    // console.error(errorData)
+    // console.error(errorData.error)
+    console.log('123231')
     throw new Error(error.message || 'Unable to register.');
   }
 };

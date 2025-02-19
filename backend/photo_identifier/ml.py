@@ -1,6 +1,13 @@
 # food_identifier/ml.py
 import random
 import os
+# from clarifai.rest import Image as ClImage
+# from clarifai.rest import ClarifaiApp
+# from clarifai.client.model import Model
+from io import BytesIO
+import logging
+
+logger = logging.getLogger(__name__)
 
 CLARIFAI_PAT = os.getenv("CLARIFAI_PAT")
 
@@ -17,6 +24,30 @@ def run_food_model(image_path):
     return prediction
 
 def run_food_api(image):
+    logger.info(f"Running food API with image: {image}")
+    # Initialize ClarifaiApp with your Personal Access Token
+    logger.info(f"CLARIFAI_PAT: {CLARIFAI_PAT}")
+    
+    if not CLARIFAI_PAT:
+        raise ValueError("Clarifai Personal Access Token (CLARIFAI_PAT) is not set.")
+    clarifai_app = ClarifaiApp(api_key=str(CLARIFAI_PAT))
+    logger.info(f"ClarifaiApp: {clarifai_app}")
+    # Use the Food Model from Clarifai
+    model = clarifai_app.public_models.food_model
+    logger.info(f"Model: {model}")
+    # Read image bytes and wrap it in a BytesIO object for Clarifai
+    image_bytes = image.read()
+    clarifai_image = ClImage(file_obj=BytesIO(image_bytes))  # Wrap image bytes in a BytesIO object
+    logger.info(f"Image: {clarifai_image}")
+    # Run prediction
+    model_prediction = model.predict([clarifai_image])
+    logger.info(f"Prediction: {model_prediction}")
+    # Return the prediction results (concepts)
+    # return model_prediction['outputs'][0]['data']['concepts']
+    return 'dog'
+
+def run_food_api(image):
+
     from clarifai.client.model import Model
 
     # Your PAT (Personal Access Token) can be found in the Account's Security section
@@ -37,20 +68,20 @@ def run_food_api(image):
     model_url = (
         "https://clarifai.com/clarifai/main/models/food-item-recognition"
     )
-    image_url = "https://s3.amazonaws.com/samples.clarifai.com/featured-models/image-captioning-statue-of-liberty.jpeg"
+    # image_url = "https://s3.amazonaws.com/samples.clarifai.com/featured-models/image-captioning-statue-of-liberty.jpeg"
 
     # The Predict API also accepts data through URL, Filepath & Bytes.
     # Example for predict by filepath:
     # model_prediction = Model(model_url).predict_by_filepath(filepath, input_type="text")
 
     # Example for predict by bytes:
-    # model_prediction = Model(model_url).predict_by_bytes(image_bytes, input_type="text")
+    model_prediction = Model(url=model_url, pat="35fd7f7608734f7eb142ac38d4375e71").predict_by_bytes(image.read(), input_type="image")
 
-    model_prediction = Model(url=model_url, pat=CLARIFAI_PAT).predict_by_url(
-        image_url, input_type="image"
-    )
+    # model_prediction = Model(url=model_url, pat="35fd7f7608734f7eb142ac38d4375e71").predict_by_url(
+    #     image_url, input_type="image"
+    # )
 
     # Get the output
-    return (model_prediction.outputs[0].data.concepts)
+    return (model_prediction.outputs[0].data.concepts)[0]
 
 
