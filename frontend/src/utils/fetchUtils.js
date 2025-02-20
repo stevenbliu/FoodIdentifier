@@ -1,4 +1,4 @@
-import { refreshAccessToken, isTokenExpired } from "./tokenUtils";
+import { refreshAccessToken } from "./tokenUtils";
 
 // const BACKEND_URL = process.env.REACT_APP_NGROK_PUBLIC_URL || 'http://localhost:8000/api/';
 const BACKEND_URL = "http://localhost:8000/api/";
@@ -11,11 +11,7 @@ const BACKEND_URL = "http://localhost:8000/api/";
  * @returns {Promise<Object>} - The API response data.
  * @throws {Error} - Throws if the request fails.
  */
-export const fetchAPI = async (
-  endpoint,
-  options = {},
-  requiresAuth = false
-) => {
+export const fetchAPI = async (endpoint, options = {}, requiresAuth = false) => {
   const url = `${BACKEND_URL}${endpoint}`;
   console.log("fetchingAPI url:", url);
 
@@ -33,34 +29,44 @@ export const fetchAPI = async (
     headers["ngrok-skip-browser-warning"] = 63940;
   }
 
+  // Get CSRF Token from cookies
   const csrfToken = document.cookie
     .split("; ")
     .find((row) => row.startsWith("csrftoken="))
     ?.split("=")[1];
 
-  headers["X-CSRFToken"] = csrfToken;
-
-  if (requiresAuth) {
-    let token = localStorage.getItem("access_token");
-    let refresh_token = localStorage.getItem("refresh_token");
-
-    if (!token || isTokenExpired(token)) {
-      try {
-        token = await refreshAccessToken();
-        console.log("Refreshed token");
-      } catch (error) {
-        console.error("Failed to refresh token:", error);
-        throw new Error(`Unauthorized. Please log in again. ${error}`);
-      }
-    }
-
-    headers.Authorization = `Bearer ${token}`;
+  if (csrfToken) {
+    headers["X-CSRFToken"] = csrfToken;
   }
 
   try {
     console.log("body:", options.body);
-    const response = await fetch(url, { ...options, headers });
+    let response = await fetch(url, {
+      ...options,
+      headers,
+      credentials: "include", // Ensures cookies (JWT) are sent
+    });
+
     console.log("fetch Utils response:", response);
+
+    // Handle Unauthorized (401) -> Attempt to refresh token
+    if (response.status === 401 && requiresAuth) {
+      console.warn("Access token expired. Attempting refresh...");
+
+      try {
+        await refreshAccessToken(); // Refresh the token
+
+        console.log("Retrying request after token refresh...");
+        response = await fetch(url, {
+          ...options,
+          headers,
+          credentials: "include",
+        });
+      } catch (refreshError) {
+        console.error("Token refresh failed. User needs to re-authenticate.");
+        throw new Error("Unauthorized. Please log in again.");
+      }
+    }
 
     if (!response.ok) {
       const errorDetails = await response.text();

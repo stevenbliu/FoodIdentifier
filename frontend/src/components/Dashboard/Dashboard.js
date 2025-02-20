@@ -51,13 +51,13 @@ function Dashboard() {
         subscribeToNotifications();
       },
     },
-    { title: "Test Functions", component: () => <TestButtons /> },
+    { title: "Test Functions", component: <TestButtons /> },
     {
-      title: "Fetch Food Info",
+      title: "Fetch Food Info", 
       component: () => <FetchPhoto setFoodInfo={setFoodInfo} />,
     },
   ];
-
+ 
   return (
     <Box
       minH="100vh"

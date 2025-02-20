@@ -54,8 +54,9 @@ export const loginUser  = async (email, password, login) => {
     console.log('User logged in successfully:', data.refresh, data.access);
 
     // Optionally, store the refresh token if needed
-    localStorage.setItem('refresh_token', data.refresh);
-    localStorage.setItem('access_token', data.access);
+    // localStorage.setItem('refresh_token', data.refresh);
+    // localStorage.setItem('access_token', data.access);
+    localStorage.clear();
 
     return data.user; // Return useful data
   } catch (error) {

@@ -26,6 +26,12 @@ from food_identifier.throttling import (
     SustainedRateThrottle,
 )  # Import from core
 
+from .utils import create_jwt_for_user
+
+from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +63,7 @@ class LoginView(APIView):
 
     def post(self, request):
 
-        logger.info(f"Login attempt for user {request.data.get('username')}")
+        logger.info(f"Login attemspt for user {request.data.get('username')}")
 
         username = request.data.get("username")
         password = request.data.get("password")
@@ -66,12 +72,10 @@ class LoginView(APIView):
         if not user:
             return Response({"error": "Invalid credentials"}, status=400)
 
+        jwt_token = create_jwt_for_user(user)
+
         try:
-            # storing tokens
-            # stored_token, created = RefreshToken.objects.update_or_create(
-            #     user=user,
-            #     defaults={'refresh_token': str(refresh)}
-            # )
+            logger.info(f"Attempting to save refresh token for user {user.username}")
 
             refresh = RefreshToken.for_user(user)
             refresh_token = str(refresh)
@@ -82,14 +86,36 @@ class LoginView(APIView):
             # if created:
             logger.info(f"New refresh token created for user {user.username}")
 
-            response =  Response(
-                {"refresh": refresh_token, "access": access_token, 'csrf_token': csrf_token},
+            response = Response(
+                {
+                    "refresh": refresh_token,
+                    "access": access_token,
+                    "csrf_token": csrf_token,
+                    'user': {
+                        'id': user.id,
+                        'email': user.email
+                    }
+                },
                 status=status.HTTP_200_OK,
             )
-            
-             # Set HTTP-only cookies for tokens
-            response.set_cookie("access_token", access_token, httponly=True, secure=True, samesite="Lax")
-            response.set_cookie("refresh_token", refresh_token, httponly=True, secure=True, samesite="Lax")
+
+            # Set HTTP-only cookies for tokens
+            response.set_cookie(
+                "access_token",
+                jwt_token,
+                httponly=True,  # Prevents JavaScript access
+                secure=True,  # Only send over HTTPS
+                samesite="Strict",
+                max_age=3600,  # 1-hour expiry
+            )
+
+            response.set_cookie(
+                "refresh_token",
+                refresh_token,
+                httponly=True,
+                secure=True,
+                samesite="Lax",
+            )
 
             return response
             # else:
@@ -167,3 +193,84 @@ class TokenRefreshView(APIView):
                 f"Error refreshing token for user {request.user.username}: {str(e)}"
             )
             raise AuthenticationFailed("Invalid refresh token") from e
+
+
+class RefreshTokenView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.COOKIES.get("refresh_token")
+        if not refresh_token:
+            return JsonResponse({"detail": "No refresh token provided"}, status=400)
+
+        try:
+            refresh = RefreshToken(refresh_token)
+            access_token = str(refresh.access_token)
+            return JsonResponse({"access_token": access_token})
+        except Exception as e:
+            return JsonResponse({"detail": str(e)}, status=400)
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    permission_classes = [AllowAny]  # Allow unauthenticated users
+
+    
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+
+        # Get tokens from response
+        access_token = response.data.get("access")
+        refresh_token = response.data.get("refresh")
+
+        # Set tokens as HTTP-only cookies
+        response.set_cookie(
+            key="access_token",
+            value=access_token,
+            httponly=True,
+            secure=settings.USE_HTTPS,  # Set True in production
+            samesite="Lax",
+        )
+        response.set_cookie(
+            key="refresh_token", 
+            value=refresh_token,
+            httponly=True,
+            secure=settings.USE_HTTPS,  # Set True in production
+            samesite="Lax",
+        )
+
+        # Remove tokens from JSON response (optional)
+        response.data.pop("access", None)
+        response.data.pop("refresh", None)
+
+        return response
+
+
+class CustomTokenRefreshView(TokenRefreshView):
+    permission_classes = [AllowAny]  # Allow unauthenticated users
+
+    
+    def post(self, request, *args, **kwargs):
+        logger.info("Refreshing token view")
+        # Get refresh token from the cookie
+        refresh_token = request.COOKIES.get("refresh_token")
+
+        if not refresh_token:
+            return Response({"error": "No refresh token provided"}, status=400)
+
+        try:
+            refresh = RefreshToken(refresh_token)
+            access_token = str(refresh.access_token)
+
+            response = Response()
+            response.set_cookie(
+                key="access_token",
+                value=access_token,
+                httponly=True,
+                secure=False,  # Set True in production
+                samesite="Lax",
+            )
+            logger.info("Token refreshed")
+            return response
+        except Exception as e:
+            logger.error("Invalid refresh token")
+            return Response({"error": f"Invalid refresh token: {e}"}, status=400)

@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from food_identifier.throttling import BurstRateThrottle, SustainedRateThrottle
 
@@ -317,6 +317,7 @@ class SNSSubscribeView(APIView):
             
 class InjectTestDataView(APIView):
     """Injects test data into the database."""
+    # permission_classes = [AllowAny]
     
     def get(self, request):
         test_data = {"filename": "test_image.jpg", "file_size": 1024}

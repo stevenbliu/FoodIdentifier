@@ -96,7 +96,9 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",  # Add JWT Authentication
+        # "rest_framework_simplejwt.authentication.JWTAuthentication",  # Add JWT Authentication
+        'authentication.middleware.JWTAuthenticationFromCookie',  # ✅ Read JWT from cookies
+
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",  # Optional: Define default permission class
@@ -145,10 +147,17 @@ CORS_ORIGIN_WHITELIST = [
     "https://example.com",
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False
+
+
 from corsheaders.defaults import default_headers
 
 CORS_ALLOW_HEADERS = default_headers + (
     "ngrok-skip-browser-warning",  # Allow the ngrok specific header if needed
+    "content-type",
+    "x-csrftoken",
+    "authorization",
 )
 
 ROOT_URLCONF = "food_identifier.urls"
@@ -299,3 +308,7 @@ SIMPLE_JWT = {
     "AUTH_COOKIE_PATH": "/",
     "AUTH_COOKIE_SAMESITE": "Lax",  # Helps prevent CSRF
 }
+
+CSRF_COOKIE_SECURE = True 
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = "Strict"
