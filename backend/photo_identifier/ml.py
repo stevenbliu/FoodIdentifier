@@ -81,7 +81,7 @@ def run_food_api(image):
     #     image_url, input_type="image"
     # )
 
-    # Get the output
+    # Get the output 
     logger.info([(concept.name, concept.value) for concept in model_prediction.outputs[0].data.concepts[:10]])
     return (model_prediction.outputs[0].data.concepts)[0]
 

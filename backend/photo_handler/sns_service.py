@@ -8,7 +8,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# @csrf_exempt
+# @csrf_exempt 
 # def send_sns_notification(request, topic_arn):
 #     print('send')
 #     sns = boto3.client('sns', region_name='us-east-1')

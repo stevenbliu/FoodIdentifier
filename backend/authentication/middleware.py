@@ -32,7 +32,7 @@ class JWTAuthenticationFromCookie(BaseAuthentication):
                 self.refresh_access_token(refresh_token)
                 return None  # Refreshed → continue to next authentication method
             raise AuthenticationFailed("Access token has expired and no refresh token provided.")
-        except jwt.InvalidTokenError:
+        except jwt.InvalidTokenError: 
             logger.info('Invalid access token.')
             raise AuthenticationFailed("Invalid access token.")
 

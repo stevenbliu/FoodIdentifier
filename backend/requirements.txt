@@ -63,3 +63,5 @@ tzdata==2024.2
 pywin32; sys_platform == "win32"
 clarifai
 pyjwt
+django-allauth
+cryptography

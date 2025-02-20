@@ -6,6 +6,13 @@ from django.conf import settings  # Import settings
 class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    
+    # username = models.CharField(max_length=100)
+    # email = models.EmailField(max_length=100)
+    # password = models.CharField(max_length=100)
+
+    # USERNAME_FIELD = 'email'
+    # REQUIRED_FIELDS = ['username'] 
 
 class RefreshTokenModel(models.Model):
     # Use settings.AUTH_USER_MODEL to refer to the user model
