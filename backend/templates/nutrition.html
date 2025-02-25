@@ -1,0 +1,36 @@
+{% extends "base.html" %}  {# Extend the base layout if available #}
+
+{% block content %}
+    <div class="nutrition-container">
+        <h2 class="nutrition-title">Nutrition Facts</h2>
+        <div class="nutrition-content">
+            {{ nutrition_html|safe }}  {# Render the raw HTML safely #}
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .nutrition-container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .nutrition-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .nutrition-content {
+            padding: 10px;
+            border-top: 2px solid #ddd;
+        }
+    </style>
+{% endblock %}

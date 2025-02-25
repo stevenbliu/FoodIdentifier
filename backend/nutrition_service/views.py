@@ -13,13 +13,14 @@ class NutritionView(View):
         # Assuming the Gin service is running at this URL
         # url = f'http://localhost:8080/nutrition/{food_name}' # local
         url = f'http://nutrition-service:8080/nutrition/{food_name}' # docker
-
+  
         try:
             response = requests.get(url)
             response.raise_for_status()  # Raise an exception for 4xx/5xx errors
             
-            # Return the raw HTML response from Gin and render it
-            return HttpResponse(response.text)  # Directly return the HTML
+            # Pass the HTML from Gin as context to the Django template
+            context = {"nutrition_html": response.text}
+            return render(request, "nutrition.html", context)
 
         except requests.exceptions.RequestException as e:
             return HttpResponse(f"<h1>Error:</h1><p>{str(e)}</p>", status=500)

@@ -203,7 +203,7 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
             # os.path.join(BASE_DIR, 'food_photo_service\photo\templates'),
-            os.path.join(BASE_DIR, "photo_handler"),
+            os.path.join(BASE_DIR, "templates"),
         ],
         "APP_DIRS": True,
         "OPTIONS": {
