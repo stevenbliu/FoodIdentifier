@@ -93,6 +93,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "photo_handler",
     "photo_identifier",
+    "nutrition_service",
     "rest_framework",
     "rest_framework_simplejwt",
     "authentication",

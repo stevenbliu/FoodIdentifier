@@ -21,9 +21,9 @@ urlpatterns = [
     path(dev_prefix + 'auth/', include('authentication.urls'), name='auth_api'),
     path(dev_prefix + 'test/', views.TestAPI.as_view(), name='test_api'),
     path(dev_prefix, RedirectView.as_view(url=dev_prefix  + 'test/', permanent=False), name='api'),  # Temporary redirect
-    path('auth/', include('allauth.urls')),  # Django-allauth URLs
-    path(dev_prefix + 'nutrition/', include('nutrition.urls'), name='nutrition_api'),
-
+    path('auth/', include('allauth.urls')),  # Django-allauth URLs 
+    path(dev_prefix, include('nutrition_service.urls'), name='nutrition_api'),
+ 
 
     # path('', include('food_identifier.urls')),  # Include food_identifier app's URLs (for generate-presigned-url)
 ]
