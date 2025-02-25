@@ -9,7 +9,6 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 )
 
 const USDA_API_URL = "https://api.nal.usda.gov/fdc/v1/foods/search"
@@ -27,10 +26,10 @@ type USDAResponse struct {
 
 func fetchFoodNutrition(foodName string) (*USDAResponse, error) {
 	// Load the .env file
-	err := godotenv.Load("../.env")
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 
 	// Fetch USDA API Key from the .env file
 	apiKey := os.Getenv("USDA_API_KEY")

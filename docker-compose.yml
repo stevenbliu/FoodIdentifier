@@ -69,6 +69,7 @@ services:
       start_period: 10s
       timeout: 5s
 
+
   frontend:
     build: ./frontend
     ports:
@@ -101,6 +102,19 @@ services:
       start_period: 10s
       timeout: 5s
 
+  nutrition-service:
+    build: ./nutrition-service
+    ports:
+      - "8080:8080"    
+    env_file:
+      - ./.env
+    # command: tail -f /dev/null  # Keep the container running
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]  # Adjust if you have a health endpoint
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 5s
   # nginx:
   #   build: ./nginx
   #   ports:
