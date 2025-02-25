@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 import requests
-from django.http import JsonResponse
+from django.http import HttpResponse
 from django.views import View
 from rest_framework.permissions import AllowAny
 
@@ -16,11 +16,10 @@ class NutritionView(View):
 
         try:
             response = requests.get(url)
-            response.raise_for_status()  # Will raise an exception for 4xx/5xx errors
-            data = response.json()
+            response.raise_for_status()  # Raise an exception for 4xx/5xx errors
             
-            # Return the nutrition data to the frontend
-            return JsonResponse(data)
-        
+            # Return the raw HTML response from Gin and render it
+            return HttpResponse(response.text)  # Directly return the HTML
+
         except requests.exceptions.RequestException as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            return HttpResponse(f"<h1>Error:</h1><p>{str(e)}</p>", status=500)

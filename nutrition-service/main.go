@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -22,6 +23,14 @@ type USDAResponse struct {
 			UnitName     string  `json:"unitName"`
 		} `json:"foodNutrients"`
 	} `json:"foods"`
+}
+
+type NutritionalData struct {
+	FoodName      string
+	Calories      float64
+	Carbohydrates float64
+	Proteins      float64
+	Fats          float64
 }
 
 func fetchFoodNutrition(foodName string) (*USDAResponse, error) {
@@ -71,7 +80,50 @@ func getNutritionHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, data)
+	// Extract the first food item (assuming we are only interested in the first result)
+	foodItem := data.Foods[0]
+
+	// Map the USDA data to the struct for template rendering
+	nutritionalData := NutritionalData{
+		FoodName:      foodItem.Description,
+		Calories:      0, // Find and set real values based on your USDA API response
+		Carbohydrates: 0, // Set values
+		Proteins:      0, // Set values
+		Fats:          0, // Set values
+	}
+
+	// Populate nutritionalData based on the USDA response
+	for _, nutrient := range foodItem.FoodNutrients {
+		switch nutrient.NutrientName {
+		case "Energy":
+			nutritionalData.Calories = nutrient.Value
+		case "Carbohydrate, by difference":
+			nutritionalData.Carbohydrates = nutrient.Value
+		case "Protein":
+			nutritionalData.Proteins = nutrient.Value
+		case "Total lipid (fat)":
+			nutritionalData.Fats = nutrient.Value
+		}
+	}
+
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal("Error getting current working directory: ", err)
+	}
+	log.Println("Current working directory:", dir)
+
+	// Parse and render the template with the nutritional data
+	tmpl, err := template.ParseFiles("templates/nutritional_data.html")
+	if err != nil {
+		log.Println("Template parse error:", err) // Print the detailed error
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error parsing template"})
+		return
+	}
+	// Execute the template and send the HTML response
+	err = tmpl.Execute(c.Writer, nutritionalData)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error rendering template"})
+	}
 }
 
 func main() {
