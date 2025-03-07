@@ -12,6 +12,7 @@ import {
 import UploadImage from "../../business/FileUpload";
 import TestButtons from "../../business/TestButtons";
 import FetchPhoto from "../../business/FetchPhoto";
+import WebSocketTask from "../../business/WebSocket";
 import { useUser } from "../../context/UserContext";
 // import SubscribeNotifications from "../SubscribeNotification";
 import DashboardCard from "./DashboardCard"; // New component for sections
@@ -56,6 +57,10 @@ function Dashboard() {
       title: "Fetch Food Info", 
       component: () => <FetchPhoto setFoodInfo={setFoodInfo} />,
     },
+    {
+      title: "Test WebSocket", 
+      component: <WebSocketTask />,
+    }
   ];
  
   return (

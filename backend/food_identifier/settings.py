@@ -79,6 +79,8 @@ logger.info(f"DEVELOPER_ENV: {DEBUG}")
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne", # ASGI Server
+
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -97,8 +99,18 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "authentication",
+    "channels", # Websockets
     # 'storages'
 ]
+
+ASGI_APPLICATION = "food_identifier.asgi.application"
+ 
+# Use Redis for WebSockets
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",  # Use Redis in production
+    },
+}
 
 SITE_ID = 1
 

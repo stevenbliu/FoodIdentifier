@@ -47,3 +47,8 @@ urllib3==2.2.3
 wcwidth==0.2.13
 wheel==0.44.0
 gunicorn==23.0.0
+
+celery
+daphne
+channels
+channels-redis
