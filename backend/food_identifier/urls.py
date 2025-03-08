@@ -23,6 +23,8 @@ urlpatterns = [
     path(dev_prefix, RedirectView.as_view(url=dev_prefix  + 'test/', permanent=False), name='api'),  # Temporary redirect
     path('auth/', include('allauth.urls')),  # Django-allauth URLs 
     path(dev_prefix, include('nutrition_service.urls'), name='nutrition_api'),
+    path('start-processing/', views.start_processing, name='start_processing'),
+
  
 
     # path('', include('food_identifier.urls')),  # Include food_identifier app's URLs (for generate-presigned-url)

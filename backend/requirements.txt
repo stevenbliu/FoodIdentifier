@@ -65,3 +65,9 @@ clarifai
 pyjwt
 django-allauth
 cryptography
+
+
+celery
+daphne
+channels
+channels-redis

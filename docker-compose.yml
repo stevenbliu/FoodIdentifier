@@ -1,8 +1,7 @@
 # version: '3'
 services:
-
   # cypress:
-  #   build: ./cypress # 
+  #   build: ./cypress #
   #   environment:
   #     - CYPRESS_baseUrl=http://host.docker.internal:3000  # Update for Mac/Windows
   #   volumes:
@@ -12,11 +11,10 @@ services:
   #     - 8888:8080
   #   command: npx cypress run # Run tests on container start
 
-
   ngrok:
     build: ./ngrok
     command: bash -c "tail -f /dev/null"
-    entrypoint: ["bash", "/usr/local/bin/entrypoint.sh"]  # Specify the custom script as the entrypoint
+    entrypoint: ["bash", "/usr/local/bin/entrypoint.sh"] # Specify the custom script as the entrypoint
     environment:
       NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
       BACKEND_PORT: 8000
@@ -24,10 +22,10 @@ services:
       - "4040:4040"
     volumes:
       # - ./.env:/app/.env  # Mount the .env file to the container
-      - ./.env:/app/.env:rw  # Add the `:cached` flag for better performance on macOS and Windows
-      - ./ngrok/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro  # Mount the custom script
+      - ./.env:/app/.env:rw # Add the `:cached` flag for better performance on macOS and Windows
+      - ./ngrok/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro # Mount the custom script
     # depends_on:
-      # - backend  # Ensure the backend is up before starting ngrok
+    # - backend  # Ensure the backend is up before starting ngrok
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4040"]
       # test: ["CMD", "curl", "-f", "${REACT_APP_API_URL}"]
@@ -36,39 +34,52 @@ services:
       start_period: 10s
       timeout: 5s
 
-
   backend:
-    build: ./backend # local 
+    build: ./backend # local
     # image: sdevinl/foodidentifier-backend:latest
     volumes:
       - ./backend:/app
-      - ./backend/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro  # Mount the custom script
-      - ./.env:/app/.env:rw  # Add the `:cached` flag for better performance on macOS and Windows
+      - ./backend/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro # Mount the custom script
+      - ./.env:/app/.env:rw # Add the `:cached` flag for better performance on macOS and Windows
     ports:
       - "8000:8000"
     depends_on:
       postgres-primary:
-          condition: service_healthy  # Waits for the primary to be healthy before starting
+        condition: service_healthy # Waits for the primary to be healthy before starting
       ngrok:
-          condition: service_healthy  # Waits for ngrok to be healthy before starting
+        condition: service_healthy # Waits for ngrok to be healthy before starting
+      # celery:
     environment:
-      - DATABASE_URL=${DB_URL}  # Use the database URL from the .env file
-      - REACT_APP_API_URL=http://backend:8000  # Use internal backend service
+      - DATABASE_URL=${DB_URL} # Use the database URL from the .env file
+      - REACT_APP_API_URL=http://backend:8000 # Use internal backend service
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     env_file:
       - ./.env
-    entrypoint: ["bash", "/usr/local/bin/entrypoint.sh"]  # Specify the custom script as the entrypoint
+    entrypoint: ["bash", "/usr/local/bin/entrypoint.sh"] # Specify the custom script as the entrypoint
     command: bash -c "python manage.py runserver 0.0.0.0:8000"
     # command: bash -c "gunicorn myproject.wsgi:application --bind 0.0.0.0:8000"
     # command: tail -f /dev/null
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/test/"]  # Adjust if you have a health endpoint
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/test/"] # Adjust if you have a health endpoint
       interval: 30s
       retries: 3
       start_period: 10s
       timeout: 5s
 
+  celery:
+    build: ./backend # local
+    command: celery -A food_identifier worker --loglevel=info
+    volumes:
+      - ./backend:/app
+    depends_on:
+      redis:
+        condition: service_healthy   
+    env_file:
+      - .env
+    restart: always
 
   frontend:
     build: ./frontend
@@ -79,7 +90,7 @@ services:
       - backend
       # - ngrok
     environment:
-      - REACT_APP_API_URL=http://backend:8000  # Use internal backend service
+      - REACT_APP_API_URL=http://backend:8000 # Use internal backend service
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
       - FAST_REFRESH=false
@@ -89,14 +100,14 @@ services:
       - ./.env
     volumes:
       - ./frontend:/app
-      - ./frontend/build:/app/build  # Mount the build output into the shared folder
-      - /app/node_modules  # Optional: This ensures node_modules are not overridden by your local system
+      - ./frontend/build:/app/build # Mount the build output into the shared folder
+      - /app/node_modules # Optional: This ensures node_modules are not overridden by your local system
     # command: bash -c "./ngrok_url_fetcher.sh && npm start"
     # command: bash -c "npm run build && npm start"
-    command : bash -c "npm start"
+    command: bash -c "npm start"
     # command: tail -f /dev/null
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]  # Adjust if you have a health endpoint
+      test: ["CMD", "curl", "-f", "http://localhost:3000"] # Adjust if you have a health endpoint
       interval: 30s
       retries: 3
       start_period: 10s
@@ -105,16 +116,30 @@ services:
   nutrition-service:
     build: ./nutrition-service
     ports:
-      - "8080:8080"    
+      - "8080:8080"
     env_file:
       - ./.env
     # command: tail -f /dev/null  # Keep the container running
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]  # Adjust if you have a health endpoint
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"] # Adjust if you have a health endpoint
       interval: 30s
       retries: 3
       start_period: 10s
       timeout: 5s
+
+  # Redis service
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+      timeout: 5s
+
   # nginx:
   #   build: ./nginx
   #   ports:
@@ -140,7 +165,7 @@ services:
   postgres-primary:
     image: postgres:13
     environment:
-      POSTGRES_USER: ${DB_USER} 
+      POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
       # PGDATA: /var/lib/postgresql/data  # New directory to store data
@@ -152,7 +177,7 @@ services:
     ports:
       - "5432:5432"
     expose:
-      - "5432"  # Exposed for replication
+      - "5432" # Exposed for replication
     # user: postgres
     # command: ["bash", "-c", "rm -rf /var/lib/postgresql/data/* && initdb -D /var/lib/postgresql/data && postgres"]
     healthcheck:
@@ -237,7 +262,6 @@ services:
   #   depends_on:
   #     - elasticsearch
 
-
   # prometheus:
   #   image: prom/prometheus:v2.43.0
   #   container_name: prometheus
@@ -254,10 +278,9 @@ services:
   #   environment:
   #     - GF_SECURITY_ADMIN_PASSWORD=admin
 
-
   # postgres_exporter:
   #   image: wrouesnel/postgres_exporter:latest
-    # container_name: postgres_exporter
+  # container_name: postgres_exporter
   #   environment:
   #     - DATA_SOURCE_NAME=postgresql://postgres:password@postgres:5432/dbname?sslmode=disable
   #   ports:
@@ -265,7 +288,7 @@ services:
 
   # locust:
   #   image: locustio/locust
-      
+
   #   ports:
   #     - "8089:8089"  # Expose Locust Web UI on port 8089
   #   volumes:
@@ -274,8 +297,6 @@ services:
   #     - backend  # Ensure backend is up before running Locust
   #   command: tail -f /dev/null  # Keep the container running
   #   # command: locust -f /locustfile.py --host=http://backend:8000
-
-
 
 volumes:
   pgdata:
