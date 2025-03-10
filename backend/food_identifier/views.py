@@ -22,6 +22,7 @@ class TestAPI(APIView):
 
 from django.http import JsonResponse
 from .tasks import long_running_task
+from celery.result import AsyncResult
 
 def start_processing(request):
     # food_data = request.GET.get('food_data', 'default_food')
@@ -29,3 +30,12 @@ def start_processing(request):
     food_data='example food data'
     task = long_running_task.apply_async(args=[food_data])  # Trigger Celery task
     return JsonResponse({"task_id": task.id, "status": "Task started"})
+
+# Check task status
+def task_status(request, task_id):
+    result = AsyncResult(task_id)  # Get task result
+    return JsonResponse({
+        "task_id": task_id,
+        "status": result.status,
+        "result": result.result if result.ready() else None
+    })

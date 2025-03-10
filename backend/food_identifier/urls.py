@@ -24,6 +24,7 @@ urlpatterns = [
     path('auth/', include('allauth.urls')),  # Django-allauth URLs 
     path(dev_prefix, include('nutrition_service.urls'), name='nutrition_api'),
     path('start-processing/', views.start_processing, name='start_processing'),
+    path('task-status/<str:task_id>/', views.task_status, name='task_status'),
 
  
 
