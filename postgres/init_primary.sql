@@ -17,3 +17,4 @@ ALTER SYSTEM SET hot_standby = on;
 
 -- Reload PostgreSQL configuration to apply changes
 SELECT pg_reload_conf();
+
