@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: food_identifier
+    env: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    buildCommand: docker-compose build
+    startCommand: docker-compose up
+    envVars:
+      - key: PORT
+        value: 8000
